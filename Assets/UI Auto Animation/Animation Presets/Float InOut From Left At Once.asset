@@ -44,7 +44,7 @@ MonoBehaviour:
   positionDelay: 0
   positionDuration: 0.4
   delayPerElementPosition: 0
-  offsetPosition: {x: -25, y: 0}
+  offsetPosition: {x: 25, y: 0}
   curvePosition:
     serializedVersion: 2
     m_Curve:
@@ -127,3 +127,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  autoTrigger: 0
+  autoTriggerTimer: 5
