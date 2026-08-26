@@ -2,18 +2,8 @@ using UnityEngine;
 
 public class FamilyManager : MonoBehaviour
 {
-    private void Start()
-    {
-        SacrificeArm(GameManager.Instance.dad);
-
-        Debug.Log(
-            "Dad - Arm: " +
-            GameManager.Instance.dad.missingArm +
-            " | Injured: " +
-            GameManager.Instance.dad.isInjured
-        );
-    }
-    public void FeedCharacter(CharacterData character)
+     
+   public void FeedCharacter(CharacterData character)
     {
         if (character == null)
             return;
@@ -22,8 +12,55 @@ public class FamilyManager : MonoBehaviour
             return;
 
         character.isHungry = false;
+        character.hungerState = HungerState.Normal;
 
-        Debug.Log(character.characterName + " sudah diberi makan.");
+        Debug.Log(
+            character.characterName +
+            " sudah diberi makan. Hunger kembali NORMAL."
+        );
+    }
+
+    private void ProcessHunger(CharacterData character)
+    {
+        switch (character.hungerState)
+        {
+            case HungerState.Normal:
+
+                character.hungerState = HungerState.Hungry;
+                character.isHungry = true;
+
+                Debug.Log(
+                    character.characterName +
+                    " sekarang HUNGRY."
+                );
+
+                break;
+
+            case HungerState.Hungry:
+
+                character.hungerState = HungerState.Starving;
+                character.isHungry = true;
+
+                Debug.Log(
+                    character.characterName +
+                    " sekarang STARVING!"
+                );
+
+                break;
+
+            case HungerState.Starving:
+
+                character.hungerState = HungerState.Dead;
+                character.isAlive = false;
+                character.isHungry = true;
+
+                Debug.Log(
+                    character.characterName +
+                    " MATI karena kelaparan!"
+                );
+
+                break;
+        }
     }
 
     public void GiveMedkit(CharacterData character)
@@ -115,5 +152,52 @@ public class FamilyManager : MonoBehaviour
             return false;
 
         return true;
+    }
+
+   public void ProcessDailyHunger()
+    {
+        GameManager gameManager = GameManager.Instance;
+
+        ProcessCharacterHunger(
+            gameManager.dad,
+            gameManager.pendingFeedDad
+        );
+
+        ProcessCharacterHunger(
+            gameManager.mom,
+            gameManager.pendingFeedMom
+        );
+
+        ProcessCharacterHunger(
+            gameManager.son,
+            gameManager.pendingFeedSon
+        );
+
+        ProcessCharacterHunger(
+            gameManager.daughter,
+            gameManager.pendingFeedDaughter
+        );
+    }
+
+    private void ProcessCharacterHunger(
+        CharacterData character,
+        bool wasFed
+    )
+    {
+        if (character == null)
+            return;
+
+        if (!character.isAlive)
+            return;
+
+        if (character.isMissing)
+            return;
+
+        // Kalau hari ini sudah diberi makan,
+        // jangan naikkan hunger.
+        if (wasFed)
+            return;
+
+        ProcessHunger(character);
     }
 }

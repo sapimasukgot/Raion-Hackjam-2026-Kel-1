@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class DragableItem : MonoBehaviour,
+    IBeginDragHandler,
+    IDragHandler,
+    IEndDragHandler
 {
     public enum ItemType
     {
@@ -9,19 +12,27 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         Medkit,
         Tools,
         Knife,
+
         Dad,
         Mom,
-        Daughter,
-        Son
+        Son,
+        Daughter
     }
 
+    [Header("Item")]
     [SerializeField] private ItemType itemType;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
 
+    // Posisi sebelum drag
     private Vector3 originalPosition;
-    private bool wasDropped = false;
+
+    // Posisi rumah permanen
+    private Vector3 homePosition;
+
+    // Apakah drop terakhir berhasil
+    private bool droppedSuccessfully = false;
 
     private void Awake()
     {
@@ -35,40 +46,105 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         }
     }
 
+    private void Start()
+    {
+        // Simpan posisi rumah setelah UI selesai di-layout
+        homePosition = rectTransform.position;
+
+        Debug.Log(
+            gameObject.name +
+            " HOME POSITION disimpan: " +
+            homePosition
+        );
+    }
+
+    // =====================================================
+    // GET ITEM TYPE
+    // =====================================================
+
+    public ItemType GetItemType()
+    {
+        return itemType;
+    }
+
+    // =====================================================
+    // BEGIN DRAG
+    // =====================================================
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         originalPosition = rectTransform.position;
-        wasDropped = false;
+
+        droppedSuccessfully = false;
 
         canvasGroup.blocksRaycasts = false;
 
-        Debug.Log(gameObject.name + " mulai di-drag");
+        Debug.Log(
+            gameObject.name +
+            " mulai di-drag."
+        );
     }
+
+    // =====================================================
+    // DRAG
+    // =====================================================
 
     public void OnDrag(PointerEventData eventData)
     {
         rectTransform.position = eventData.position;
     }
 
+    // =====================================================
+    // END DRAG
+    // =====================================================
+
     public void OnEndDrag(PointerEventData eventData)
     {
         canvasGroup.blocksRaycasts = true;
 
-        if (!wasDropped)
+        Debug.Log(
+            gameObject.name +
+            " selesai di-drag."
+        );
+
+        // Drop tidak valid
+        if (!droppedSuccessfully)
         {
             rectTransform.position = originalPosition;
+
+            Debug.Log(
+                gameObject.name +
+                " drop tidak valid → kembali ke posisi sebelum drag."
+            );
         }
-
-        Debug.Log(gameObject.name + " selesai di-drag");
     }
 
-    public void SetDropped(bool dropped)
+    // =====================================================
+    // DROP STATUS
+    // =====================================================
+
+    public void SetDropped(bool value)
     {
-        wasDropped = dropped;
+        droppedSuccessfully = value;
     }
 
-    public ItemType GetItemType()
+    // =====================================================
+    // RETURN KE HOME
+    // =====================================================
+
+    public void ReturnToInitialPosition()
     {
-        return itemType;
+        if (rectTransform == null)
+            return;
+
+        rectTransform.position = homePosition;
+
+        droppedSuccessfully = false;
+
+        Debug.Log(
+            gameObject.name +
+            " kembali ke HOME POSITION: " +
+            homePosition
+        );
     }
 }

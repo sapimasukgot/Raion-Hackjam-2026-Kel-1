@@ -1,4 +1,4 @@
-using UnityEngine;
+ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DropZone : MonoBehaviour, IDropHandler
@@ -22,10 +22,14 @@ public class DropZone : MonoBehaviour, IDropHandler
         if (droppedObject == null)
             return;
 
-        DragableItem dragItem = droppedObject.GetComponent<DragableItem>();
+        DragableItem dragItem =
+            droppedObject.GetComponent<DragableItem>();
 
         if (dragItem == null)
             return;
+
+        DragableItem.ItemType itemType =
+            dragItem.GetItemType();
 
         Debug.Log(
             droppedObject.name +
@@ -33,24 +37,28 @@ public class DropZone : MonoBehaviour, IDropHandler
             gameObject.name
         );
 
-        if (IsValidDrop(dragItem.GetItemType()))
+        // =====================================================
+        // CEK CHARACTER MISSING
+        // =====================================================
+
+        if (IsCharacterMissing(itemType))
         {
             Debug.Log(
-                "DROP VALID: " +
+                "DROP INVALID: " +
                 droppedObject.name +
                 " → " +
-                gameObject.name
+                gameObject.name +
+                " | Character sedang Missing."
             );
 
-            dragItem.SetDropped(true);
-
-            RectTransform droppedRect =
-                droppedObject.GetComponent<RectTransform>();
-
-            droppedRect.position =
-                GetComponent<RectTransform>().position;
+            return;
         }
-        else
+
+        // =====================================================
+        // VALIDASI DROP
+        // =====================================================
+
+        if (!IsValidDrop(itemType))
         {
             Debug.Log(
                 "DROP INVALID: " +
@@ -58,43 +66,373 @@ public class DropZone : MonoBehaviour, IDropHandler
                 " → " +
                 gameObject.name
             );
+
+            return;
         }
+
+        Debug.Log(
+            "DROP VALID: " +
+            droppedObject.name +
+            " → " +
+            gameObject.name
+        );
+
+        // Tandai drop berhasil
+        dragItem.SetDropped(true);
+
+        // Jangan memindahkan posisi object ke DropZone.
+        // Posisi object tetap ditentukan oleh sistem drag.
+
+        // Jalankan aksi
+        SetPendingAction(itemType);
     }
 
-    private bool IsValidDrop(DragableItem.ItemType itemType)
+    // =====================================================
+    // VALIDASI DROP
+    // =====================================================
+
+    private bool IsValidDrop(
+        DragableItem.ItemType itemType
+    )
     {
         switch (dropZoneType)
         {
             case DropZoneType.MemoDad:
-                return itemType == DragableItem.ItemType.Ration ||
-                       itemType == DragableItem.ItemType.Medkit;
-
             case DropZoneType.MemoMom:
-                return itemType == DragableItem.ItemType.Ration ||
-                       itemType == DragableItem.ItemType.Medkit;
-
             case DropZoneType.MemoDaughter:
-                return itemType == DragableItem.ItemType.Ration ||
-                       itemType == DragableItem.ItemType.Medkit;
-
             case DropZoneType.MemoSon:
-                return itemType == DragableItem.ItemType.Ration ||
-                       itemType == DragableItem.ItemType.Medkit;
+
+                return itemType ==
+                           DragableItem.ItemType.Ration ||
+                       itemType ==
+                           DragableItem.ItemType.Medkit;
 
             case DropZoneType.Diary:
-                return itemType == DragableItem.ItemType.Dad ||
-                       itemType == DragableItem.ItemType.Mom ||
-                       itemType == DragableItem.ItemType.Daughter ||
-                       itemType == DragableItem.ItemType.Son;
+
+                return itemType ==
+                           DragableItem.ItemType.Dad ||
+                       itemType ==
+                           DragableItem.ItemType.Mom ||
+                       itemType ==
+                           DragableItem.ItemType.Son ||
+                       itemType ==
+                           DragableItem.ItemType.Daughter;
 
             case DropZoneType.Door:
-                return itemType == DragableItem.ItemType.Dad ||
-                       itemType == DragableItem.ItemType.Mom ||
-                       itemType == DragableItem.ItemType.Daughter ||
-                       itemType == DragableItem.ItemType.Son;
+
+                return itemType ==
+                           DragableItem.ItemType.Dad ||
+                       itemType ==
+                           DragableItem.ItemType.Mom ||
+                       itemType ==
+                           DragableItem.ItemType.Son ||
+                       itemType ==
+                           DragableItem.ItemType.Daughter;
 
             default:
                 return false;
         }
+    }
+
+    // =====================================================
+    // CEK CHARACTER MISSING
+    // =====================================================
+
+    private bool IsCharacterMissing(
+        DragableItem.ItemType itemType
+    )
+    {
+        if (GameManager.Instance == null)
+            return false;
+
+        // Dad
+        if (dropZoneType == DropZoneType.MemoDad &&
+            (itemType == DragableItem.ItemType.Ration ||
+             itemType == DragableItem.ItemType.Medkit))
+        {
+            return GameManager.Instance.dad != null &&
+                   GameManager.Instance.dad.isMissing;
+        }
+
+        // Mom
+        if (dropZoneType == DropZoneType.MemoMom &&
+            (itemType == DragableItem.ItemType.Ration ||
+             itemType == DragableItem.ItemType.Medkit))
+        {
+            return GameManager.Instance.mom != null &&
+                   GameManager.Instance.mom.isMissing;
+        }
+
+        // Son
+        if (dropZoneType == DropZoneType.MemoSon &&
+            (itemType == DragableItem.ItemType.Ration ||
+             itemType == DragableItem.ItemType.Medkit))
+        {
+            return GameManager.Instance.son != null &&
+                   GameManager.Instance.son.isMissing;
+        }
+
+        // Daughter
+        if (dropZoneType == DropZoneType.MemoDaughter &&
+            (itemType == DragableItem.ItemType.Ration ||
+             itemType == DragableItem.ItemType.Medkit))
+        {
+            return GameManager.Instance.daughter != null &&
+                   GameManager.Instance.daughter.isMissing;
+        }
+
+        return false;
+    }
+
+    // =====================================================
+    // PENDING ACTION
+    // =====================================================
+
+    private void SetPendingAction(
+        DragableItem.ItemType itemType
+    )
+    {
+        // =================================================
+        // RATION → FEEDING
+        // =================================================
+
+        if (itemType == DragableItem.ItemType.Ration)
+        {
+            switch (dropZoneType)
+            {
+                case DropZoneType.MemoDad:
+
+                    GameManager.Instance.SetPendingFeeding(
+                        GameManager.Instance.dad
+                    );
+
+                    Debug.Log(
+                        "Pending Feeding → Dad"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoMom:
+
+                    GameManager.Instance.SetPendingFeeding(
+                        GameManager.Instance.mom
+                    );
+
+                    Debug.Log(
+                        "Pending Feeding → Mom"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoSon:
+
+                    GameManager.Instance.SetPendingFeeding(
+                        GameManager.Instance.son
+                    );
+
+                    Debug.Log(
+                        "Pending Feeding → Son"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoDaughter:
+
+                    GameManager.Instance.SetPendingFeeding(
+                        GameManager.Instance.daughter
+                    );
+
+                    Debug.Log(
+                        "Pending Feeding → Daughter"
+                    );
+
+                    break;
+            }
+        }
+
+        // =================================================
+        // MEDKIT → TREATMENT
+        // =================================================
+
+        if (itemType == DragableItem.ItemType.Medkit)
+        {
+            switch (dropZoneType)
+            {
+                case DropZoneType.MemoDad:
+
+                    GameManager.Instance.SetPendingTreatment(
+                        GameManager.Instance.dad
+                    );
+
+                    Debug.Log(
+                        "Pending Treatment → Dad"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoMom:
+
+                    GameManager.Instance.SetPendingTreatment(
+                        GameManager.Instance.mom
+                    );
+
+                    Debug.Log(
+                        "Pending Treatment → Mom"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoSon:
+
+                    GameManager.Instance.SetPendingTreatment(
+                        GameManager.Instance.son
+                    );
+
+                    Debug.Log(
+                        "Pending Treatment → Son"
+                    );
+
+                    break;
+
+                case DropZoneType.MemoDaughter:
+
+                    GameManager.Instance.SetPendingTreatment(
+                        GameManager.Instance.daughter
+                    );
+
+                    Debug.Log(
+                        "Pending Treatment → Daughter"
+                    );
+
+                    break;
+            }
+        }
+
+        // =================================================
+        // CHARACTER → DOOR
+        // =================================================
+
+        if (dropZoneType == DropZoneType.Door)
+        {
+            switch (itemType)
+            {
+                case DragableItem.ItemType.Dad:
+
+                    GameManager.Instance.SetPendingExit(
+                        GameManager.Instance.dad
+                    );
+
+                    Debug.Log(
+                        "Pending Exit → Dad"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Mom:
+
+                    GameManager.Instance.SetPendingExit(
+                        GameManager.Instance.mom
+                    );
+
+                    Debug.Log(
+                        "Pending Exit → Mom"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Son:
+
+                    GameManager.Instance.SetPendingExit(
+                        GameManager.Instance.son
+                    );
+
+                    Debug.Log(
+                        "Pending Exit → Son"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Daughter:
+
+                    GameManager.Instance.SetPendingExit(
+                        GameManager.Instance.daughter
+                    );
+
+                    Debug.Log(
+                        "Pending Exit → Daughter"
+                    );
+
+                    break;
+            }
+        }
+
+        // =================================================
+        // CHARACTER → DIARY
+        // =================================================
+
+            // =================================================
+        // CHARACTER → DIARY
+        // =================================================
+
+        if (dropZoneType == DropZoneType.Diary)
+        {
+            Debug.Log(
+                "Character masuk Diary: " +
+                itemType
+            );
+
+            switch (itemType)
+            {
+                case DragableItem.ItemType.Dad:
+
+                    GameManager.Instance.SetPendingSacrifice(
+                        GameManager.Instance.dad
+                    );
+
+                    Debug.Log(
+                        "Pending Sacrifice → Dad"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Mom:
+
+                    GameManager.Instance.SetPendingSacrifice(
+                        GameManager.Instance.mom
+                    );
+
+                    Debug.Log(
+                        "Pending Sacrifice → Mom"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Son:
+
+                    GameManager.Instance.SetPendingSacrifice(
+                        GameManager.Instance.son
+                    );
+
+                    Debug.Log(
+                        "Pending Sacrifice → Son"
+                    );
+
+                    break;
+
+                case DragableItem.ItemType.Daughter:
+
+                    GameManager.Instance.SetPendingSacrifice(
+                        GameManager.Instance.daughter
+                    );
+
+                    Debug.Log(
+                        "Pending Sacrifice → Daughter"
+                    );
+
+                    break;
+            }
+        }
+
+
     }
 }
