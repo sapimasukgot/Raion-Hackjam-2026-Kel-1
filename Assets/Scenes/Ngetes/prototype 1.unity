@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 54501833}
   - component: {fileID: 54501832}
   m_Layer: 5
-  m_Name: Ibuk
+  m_Name: ibuk drag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -346,7 +346,7 @@ MonoBehaviour:
   snapZones:
   - {fileID: 412329115}
   - {fileID: 418434378}
-  - {fileID: 1887837380}
+  - {fileID: 0}
   onlyMatchingTag: 0
   myZoneTag: Default
 --- !u!114 &54501834
@@ -930,6 +930,56 @@ MeshRenderer:
   m_SortingOrder: 200
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &254588889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 254588890}
+  - component: {fileID: 254588891}
+  m_Layer: 5
+  m_Name: memo ayah
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &254588890
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254588889}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.41666764, y: 0.41666764, z: 0.41666764}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 866373329}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -218.08386, y: 5.909189}
+  m_SizeDelta: {x: 80.257, y: 90.16}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &254588891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254588889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a7245add4d88f43a9aa53b54dda191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SnapZone
+  zoneTag: Default
+  isOccupied: 0
 --- !u!1 &278262742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1917,7 +1967,7 @@ GameObject:
   - component: {fileID: 412329114}
   - component: {fileID: 412329115}
   m_Layer: 5
-  m_Name: Paper
+  m_Name: Diary paper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1967,7 +2017,7 @@ GameObject:
   - component: {fileID: 418434377}
   - component: {fileID: 418434378}
   m_Layer: 5
-  m_Name: Memo(2)
+  m_Name: memo ibu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2006,6 +2056,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SnapZone
   zoneTag: Default
   isOccupied: 0
+--- !u!1 &448861823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 448861824}
+  - component: {fileID: 448861825}
+  m_Layer: 5
+  m_Name: memo anak perempuan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &448861824
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448861823}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.41666764, y: 0.41666764, z: 0.41666764}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 866373329}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -218.08386, y: -61}
+  m_SizeDelta: {x: 80.257, y: 90.16}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &448861825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448861823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a7245add4d88f43a9aa53b54dda191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SnapZone
+  zoneTag: Default
+  isOccupied: 0
 --- !u!1 &498841188
 GameObject:
   m_ObjectHideFlags: 0
@@ -2020,7 +2120,7 @@ GameObject:
   - component: {fileID: 498841191}
   - component: {fileID: 498841190}
   m_Layer: 5
-  m_Name: Bpk
+  m_Name: ' bapak drag'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2073,7 +2173,7 @@ MonoBehaviour:
   snapZones:
   - {fileID: 412329115}
   - {fileID: 0}
-  - {fileID: 1887837380}
+  - {fileID: 0}
   onlyMatchingTag: 0
   myZoneTag: Default
 --- !u!114 &498841192
@@ -2128,7 +2228,7 @@ GameObject:
   - component: {fileID: 737975847}
   - component: {fileID: 737975846}
   m_Layer: 5
-  m_Name: BotolPIN
+  m_Name: 'makanan drag '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2364,7 +2464,7 @@ GameObject:
   - component: {fileID: 784197278}
   - component: {fileID: 784197279}
   m_Layer: 5
-  m_Name: Pintu (1)
+  m_Name: pintu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2386,8 +2486,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 362.7507, y: 111.06279}
-  m_SizeDelta: {x: 66.011, y: 92.893}
+  m_AnchoredPosition: {x: 274.8706, y: -0.00031281}
+  m_SizeDelta: {x: 767.4299, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &784197279
 MonoBehaviour:
@@ -2440,14 +2540,15 @@ RectTransform:
   - {fileID: 54501831}
   - {fileID: 412329114}
   - {fileID: 418434377}
+  - {fileID: 254588890}
+  - {fileID: 448861824}
   - {fileID: 2033661590}
-  - {fileID: 1887837379}
   - {fileID: 784197278}
   m_Father: {fileID: 1272349308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 396, y: 0}
+  m_AnchoredPosition: {x: 425, y: -18}
   m_SizeDelta: {x: 800, y: 450}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &866373330
@@ -3738,56 +3839,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.9, y: 2.62}
   m_EdgeRadius: 0
---- !u!1 &1887837378
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1887837379}
-  - component: {fileID: 1887837380}
-  m_Layer: 5
-  m_Name: Pintu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1887837379
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1887837378}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.41666764, y: 0.41666764, z: 0.41666764}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 866373329}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 196.51385, y: 25.064629}
-  m_SizeDelta: {x: 66.011, y: 65.476}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1887837380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1887837378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a7245add4d88f43a9aa53b54dda191, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SnapZone
-  zoneTag: Default
-  isOccupied: 0
 --- !u!1 &1945136651
 GameObject:
   m_ObjectHideFlags: 0
@@ -4040,7 +4091,7 @@ GameObject:
   - component: {fileID: 2033661590}
   - component: {fileID: 2033661591}
   m_Layer: 5
-  m_Name: Memo(4)
+  m_Name: memo anak laki
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4062,7 +4113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -212.613, y: -58.750145}
+  m_AnchoredPosition: {x: -269, y: -58.750145}
   m_SizeDelta: {x: 80.257, y: 90.16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2033661591
@@ -4093,7 +4144,7 @@ GameObject:
   - component: {fileID: 2073551271}
   - component: {fileID: 2073551270}
   m_Layer: 5
-  m_Name: Pisau
+  m_Name: ' pisau drag'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
