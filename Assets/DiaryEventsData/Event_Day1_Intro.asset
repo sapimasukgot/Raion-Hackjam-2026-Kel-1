@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3425e15e25afe634faaf74d5d6cfca0e, type: 3}
+  m_Name: Event_Day1_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryEvent
+  eventID: Event_Day1_Intro
+  category: 4
+  narasiKejadian: Hari ini keluarga Setiawan pindah ke rumah baru. Aneh, tadi di
+    perjalanan, mereka melihat adanya perkumpulan warga-warga di tengah hutan. Setelah
+    sampai ke rumah, keluarga Setiawan segera siap-siap membersihkan rumah baru mereka.
+    Tadi pagi, seorang tetangga datang dan berbicara dengan Adrian Setiawan untuk
+    mengajak bergabung dengan komunitas mereka namun Adrian menolak. Ketika tetangga
+    itu mendengar penolakan itu, dia langsung menjadi gila dan teriak-teriak yang
+    disusul dengan kemunculan para tetangga lain yang menyerbu rumah mereka dengan
+    senjata. Adrian segera mengunci pintu dan mengumpulkan keluarganya di ruang tengah
+    rumah.
+  requiresTools: 0
+  requiresKnife: 0
+  requiresBandage: 0
+  choices:
+  - buttonLabel: Bertahan di Ruang Tengah
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0

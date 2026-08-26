@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3425e15e25afe634faaf74d5d6cfca0e, type: 3}
+  m_Name: Event_JendelaRusak
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryEvent
+  eventID: Event_JendelaRusak
+  category: 0
+  narasiKejadian: Terbangun di suatu pagi dengan sebuah batu di dalam rumah. Ternyata
+    jendela rumah dilempari batu oleh tetangga. Jendela sekarang berlubang dan hampir
+    lepas.
+  requiresTools: 1
+  requiresKnife: 0
+  requiresBandage: 0
+  choices:
+  - buttonLabel: Perbaiki Jendela (-1 Tools)
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: -1
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
+  - buttonLabel: Abaikan
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0

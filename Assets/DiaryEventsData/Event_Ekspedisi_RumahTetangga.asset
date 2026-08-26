@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3425e15e25afe634faaf74d5d6cfca0e, type: 3}
+  m_Name: Event_Ekspedisi_RumahTetangga
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryEvent
+  eventID: Event_Ekspedisi_RumahTetangga
+  category: 1
+  narasiKejadian: Malam ini, tetangga sebelah rumah sepertinya sedang mengadakan
+    doa bersama di balai desa. Dari jendela, rumah mereka terlihat gelap dan kosong.
+    Ini adalah kesempatan yang sangat bagus untuk menyelinap dan menggeledah rumah
+    mereka. Namun, jika mereka tiba-tiba pulang lebih awal, orang yang dikirim mungkin
+    tidak pernah kembali.
+  requiresTools: 0
+  requiresKnife: 0
+  requiresBandage: 0
+  choices:
+  - buttonLabel: Kirim Ekspedisi
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
+  - buttonLabel: Abaikan
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
