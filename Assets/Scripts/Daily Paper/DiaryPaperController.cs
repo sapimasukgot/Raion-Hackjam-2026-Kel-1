@@ -2,17 +2,18 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class KulkasUIController : MonoBehaviour
+public class DiaryPaperUIController : MonoBehaviour
 {
-    [Header("GameObject UI Kulkas")]
-    public GameObject kulkasUIObject;
-
-    [Header("Referensi Animasi UI")]
+    [Header("Animasi UI")]
     public UIAutoAnimation uiAnimation;
 
     private CanvasGroup canvasGroup;
     private Coroutine closeCoroutine;
 
+
+    // =====================================================
+    // AWAKE
+    // =====================================================
 
     private void Awake()
     {
@@ -22,16 +23,12 @@ public class KulkasUIController : MonoBehaviour
         {
             uiAnimation = GetComponent<UIAutoAnimation>();
         }
-
-        if (kulkasUIObject == null)
-        {
-            Debug.LogError(
-                "❌ Kulkas UI Object belum di-assign di Inspector!",
-                this
-            );
-        }
     }
 
+
+    // =====================================================
+    // START
+    // =====================================================
 
     private void Start()
     {
@@ -45,46 +42,28 @@ public class KulkasUIController : MonoBehaviour
 
     public void OpenUI()
     {
-        // 1. HENTIKAN CLOSE YANG MASIH BERJALAN
+        // Batalkan proses close kalau masih berjalan
         if (closeCoroutine != null)
         {
             StopCoroutine(closeCoroutine);
             closeCoroutine = null;
         }
 
+        // Pastikan GameObject tetap aktif
+        gameObject.SetActive(true);
 
-        // 2. AKTIFKAN GAMEOBJECT DARI INSPECTOR
-        if (kulkasUIObject != null)
-        {
-            kulkasUIObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogError(
-                "❌ Kulkas UI Object belum di-assign!",
-                this
-            );
-
-            return;
-        }
-
-
-        // 3. AKTIFKAN CANVAS GROUP
+        // Aktifkan UI
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
 
+        Debug.Log("📄 Diary Paper besar dibuka.");
 
-        // 4. JALANKAN ANIMASI MASUK
+        // Jalankan animasi masuk
         if (uiAnimation != null)
         {
             uiAnimation.EntranceAnimation();
         }
-
-
-        Debug.Log(
-            "🧊 Kulkas UI berhasil dibuka."
-        );
     }
 
 
@@ -100,9 +79,7 @@ public class KulkasUIController : MonoBehaviour
         }
 
         closeCoroutine =
-            StartCoroutine(
-                CloseUIRoutine()
-            );
+            StartCoroutine(CloseUIRoutine());
     }
 
 
@@ -112,12 +89,11 @@ public class KulkasUIController : MonoBehaviour
 
     private IEnumerator CloseUIRoutine()
     {
-        // 1. MATIKAN INTERAKSI
+        // Langsung matikan interaksi
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-
-        // 2. ANIMASI KELUAR
+        // Jalankan animasi keluar
         if (uiAnimation != null)
         {
             uiAnimation.ExitAnimation();
@@ -125,29 +101,14 @@ public class KulkasUIController : MonoBehaviour
             float waitTime =
                 CalculateExitDuration();
 
-            yield return new WaitForSeconds(
-                waitTime
-            );
+            yield return new WaitForSeconds(waitTime);
         }
 
-
-        // 3. SEMBUNYIKAN CANVAS GROUP
         HideInstant();
-
-
-        // 4. MATIKAN GAMEOBJECT DARI INSPECTOR
-        if (kulkasUIObject != null)
-        {
-            kulkasUIObject.SetActive(false);
-        }
-
 
         closeCoroutine = null;
 
-
-        Debug.Log(
-            "🧊 Kulkas UI berhasil ditutup."
-        );
+        Debug.Log("📄 Diary Paper besar ditutup.");
     }
 
 
@@ -177,8 +138,7 @@ public class KulkasUIController : MonoBehaviour
             return 0.5f;
         }
 
-        var p =
-            uiAnimation.animationExitPresets;
+        var p = uiAnimation.animationExitPresets;
 
         float alpha =
             p.useAlphaAnimation
