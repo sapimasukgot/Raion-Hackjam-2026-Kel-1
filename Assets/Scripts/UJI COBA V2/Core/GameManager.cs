@@ -37,6 +37,14 @@ public class GameManager : MonoBehaviour
 
     [Header("Managers")]
     public FamilyManager familyManager;
+    public ReportUIController reportUIController;
+
+    // =====================================================
+    // DAILY REPORTS
+    // =====================================================
+
+    [Header("Daily Reports")]
+    public System.Collections.Generic.List<DailyReportSO> dailyReports;
 
     // =====================================================
     // PENDING FEEDING
@@ -115,6 +123,35 @@ public class GameManager : MonoBehaviour
 
         // TEST SAJA
        
+    }
+
+
+    // =====================================================
+    // DAILY REPORT LOOKUP
+    // =====================================================
+
+    /// <summary>
+    /// Ambil DailyReportSO sesuai nomor hari (day 1 = index 0).
+    /// Kalau hari melebihi jumlah report yang di-set, otomatis pakai report terakhir yang ada
+    /// (biar tidak error kalau lupa isi report untuk hari-hari jauh ke depan).
+    /// </summary>
+    public DailyReportSO GetReportForDay(int day)
+    {
+        if (dailyReports == null || dailyReports.Count == 0)
+        {
+            Debug.LogWarning("List 'Daily Reports' di GameManager masih kosong!");
+            return null;
+        }
+
+        int index = day - 1;
+
+        if (index < 0)
+            index = 0;
+
+        if (index >= dailyReports.Count)
+            index = dailyReports.Count - 1;
+
+        return dailyReports[index];
     }
 
 
@@ -1015,6 +1052,23 @@ public class GameManager : MonoBehaviour
         // =================================================
 
         currentDay++;
+
+        // =================================================
+        // 10. TAMPILKAN DAILY REPORT HARI BARU
+        // =================================================
+
+        if (reportUIController != null)
+        {
+            reportUIController.ShowReportForDay(currentDay);
+        }
+        else if (ReportUIController.Instance != null)
+        {
+            ReportUIController.Instance.ShowReportForDay(currentDay);
+        }
+        else
+        {
+            Debug.LogWarning("ReportUIController belum di-assign, report hari baru tidak ditampilkan otomatis.");
+        }
 
         // =================================================
         // DEBUG

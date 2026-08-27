@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57d7d766f731f1544bf121e1f67d5a53, type: 3}
+  m_Name: DailyReport 5
+  m_EditorClassIdentifier: Assembly-CSharp::DailyReportSO
+  summaryText: 'day 6
+
+    Hari ini keluarga Setiawan pindah ke rumah baru. Aneh,
+    tadi di perjalanan, mereka melihat adanya perkumpulan warga warga di tengah hutan.
+    Setelah sampai ke rumah, keluarga Setiawan segera siap siap membersihkan rumah
+    baru mereka. Tadi pagi, seorang tetangga datang ke rumah Setiawan dan berbicara
+    dengan Adrian Setiawan. Terlihat bahwa tetangga itu berusaha mengajak keluarga
+    Setiawan untuk bergabung dengan komunitas mereka namun Adrian menolak. Ketika
+    tetangga itu mendengar penolakan itu, dia langsung menjadi gila dan teriak teriak
+    yang disusul dengan kemunculan para tetangga lain yang menyerbu rumah mereka
+    dengan senjata. Adrian segera mengunci pintu dan mengumpulkan keluarganya di
+    ruang tengah rumah.
+
+'
+  possibleEvents:
+  - {fileID: 11400000, guid: b25cbcf5b3d2bbe4e94e5dec14ff4d98, type: 2}
+  - {fileID: 11400000, guid: 10c07d18379ddf647abdee603382b092, type: 2}
+  - {fileID: 11400000, guid: 2d6d9b99eac577a4fbd1e0bc0c147823, type: 2}
+  - {fileID: 11400000, guid: bc3d035cefd8c2f47848b56b88bc93de, type: 2}
+  - {fileID: 11400000, guid: d84c9ee0487792944acfb01e076f342a, type: 2}
+  - {fileID: 11400000, guid: 330c0bc0cabf36a47b6c854c36938340, type: 2}
+  canHaveNoEvent: 1
+  noEventChance: 0.525

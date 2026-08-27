@@ -1,4 +1,4 @@
- using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DropZone : MonoBehaviour, IDropHandler
@@ -10,7 +10,8 @@ public class DropZone : MonoBehaviour, IDropHandler
         MemoDaughter,
         MemoSon,
         Diary,
-        Door
+        Door,
+        EventSacrifice
     }
 
     [SerializeField] private DropZoneType dropZoneType;
@@ -128,6 +129,42 @@ public class DropZone : MonoBehaviour, IDropHandler
                            DragableItem.ItemType.Son ||
                        itemType ==
                            DragableItem.ItemType.Daughter;
+
+            case DropZoneType.EventSacrifice:
+
+                // Harus ada event aktif dulu.
+                if (EventManager.Instance == null ||
+                    !EventManager.Instance.IsEventActive())
+                {
+                    return false;
+                }
+
+                RandomEventSO activeEvent = EventManager.Instance.currentEvent;
+
+                // Event butuh pengorbanan karakter (Jari/Tangan/Kaki)
+                if (activeEvent.requirementType == EventRequirementType.CharacterPart)
+                {
+                    return itemType ==
+                               DragableItem.ItemType.Dad ||
+                           itemType ==
+                               DragableItem.ItemType.Mom ||
+                           itemType ==
+                               DragableItem.ItemType.Son ||
+                           itemType ==
+                               DragableItem.ItemType.Daughter;
+                }
+
+                // Event butuh item (Tools / Knife) → hanya item yang SESUAI yang valid di-drop
+                if (activeEvent.requirementType == EventRequirementType.Item)
+                {
+                    if (activeEvent.requiredItem == RequiredItemType.Tools)
+                        return itemType == DragableItem.ItemType.Tools;
+
+                    if (activeEvent.requiredItem == RequiredItemType.Knife)
+                        return itemType == DragableItem.ItemType.Knife;
+                }
+
+                return false;
 
             default:
                 return false;
@@ -430,6 +467,62 @@ public class DropZone : MonoBehaviour, IDropHandler
                     );
 
                     break;
+            }
+        }
+
+        // =================================================
+        // CHARACTER / ITEM → EVENT SACRIFICE (ZONA EVENT)
+        // =================================================
+
+        if (dropZoneType == DropZoneType.EventSacrifice)
+        {
+            // --- Kasus 1: yang di-drop adalah KARAKTER (pengorbanan Jari/Tangan/Kaki) ---
+            CharacterData sacrificedCharacter = null;
+
+            switch (itemType)
+            {
+                case DragableItem.ItemType.Dad:
+                    sacrificedCharacter = GameManager.Instance.dad;
+                    break;
+
+                case DragableItem.ItemType.Mom:
+                    sacrificedCharacter = GameManager.Instance.mom;
+                    break;
+
+                case DragableItem.ItemType.Son:
+                    sacrificedCharacter = GameManager.Instance.son;
+                    break;
+
+                case DragableItem.ItemType.Daughter:
+                    sacrificedCharacter = GameManager.Instance.daughter;
+                    break;
+            }
+
+            if (sacrificedCharacter != null && EventManager.Instance != null)
+            {
+                bool resolved = EventManager.Instance.ResolveCharacterSacrifice(sacrificedCharacter);
+
+                Debug.Log(
+                    resolved
+                        ? sacrificedCharacter.characterName + " berhasil dikorbankan untuk event."
+                        : "Pengorbanan " + sacrificedCharacter.characterName + " GAGAL diproses."
+                );
+            }
+
+            // --- Kasus 2: yang di-drop adalah ITEM (Tools / Knife) ---
+            if (itemType == DragableItem.ItemType.Tools ||
+                itemType == DragableItem.ItemType.Knife)
+            {
+                if (EventManager.Instance != null)
+                {
+                    bool resolved = EventManager.Instance.TryResolveItemRequirement();
+
+                    Debug.Log(
+                        resolved
+                            ? "Event berhasil diselesaikan dengan " + itemType
+                            : "Gagal menyelesaikan event dengan " + itemType
+                    );
+                }
             }
         }
 
