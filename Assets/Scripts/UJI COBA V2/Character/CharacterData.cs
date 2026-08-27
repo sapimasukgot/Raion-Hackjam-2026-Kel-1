@@ -44,6 +44,8 @@ public class CharacterData
 
     public bool canExpedition = true;
 
+    public float expeditionFailChanceBonus = 0f;
+
     // =====================================================
     // MISSING
     // =====================================================
@@ -74,6 +76,7 @@ public class CharacterData
         missingLeg = false;
 
         canExpedition = true;
+        expeditionFailChanceBonus = 0f;
 
         missingDays = 0;
     }
