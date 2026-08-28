@@ -53,7 +53,14 @@ public class EndingManager : MonoBehaviour
             endingPanel.SetActive(false);
 
         if (skullImagePanel != null)
+        {
             skullImagePanel.SetActive(false);
+            // Reset alpha ke 0 agar tidak terlihat
+            if (skullCanvasGroup == null)
+                skullCanvasGroup = skullImagePanel.GetComponent<CanvasGroup>();
+            if (skullCanvasGroup != null)
+                skullCanvasGroup.alpha = 0f;
+        }
 
         if (endingCanvasGroup == null && endingPanel != null)
             endingCanvasGroup = endingPanel.GetComponent<CanvasGroup>();
@@ -123,6 +130,14 @@ public class EndingManager : MonoBehaviour
             endingCanvasGroup.alpha = 0f;
         }
 
+        // Pastikan skull image di-hide di awal
+        if (skullImagePanel != null)
+        {
+            skullImagePanel.SetActive(false);
+            if (skullCanvasGroup != null)
+                skullCanvasGroup.alpha = 0f;
+        }
+
         // Display each ending line
         foreach (string line in endingStoryLines)
         {
@@ -148,9 +163,84 @@ public class EndingManager : MonoBehaviour
             yield return StartCoroutine(ShowSkullImage());
         }
 
+        // Hide skull image sebelum kembali ke main menu
+        if (skullImagePanel != null)
+        {
+            skullImagePanel.SetActive(false);
+            if (skullCanvasGroup != null)
+                skullCanvasGroup.alpha = 0f;
+            Debug.Log("Skull image panel hidden before returning to main menu.");
+        }
+
+        // Hide ending panel juga
+        if (endingPanel != null)
+        {
+            endingPanel.SetActive(false);
+        }
+
+        // RESET SEMUA GAME STATE SEBELUM KEMBALI KE MAIN MENU
+        ResetAllGameState();
+
         // Return to main menu
         Debug.Log("Loading Main Menu: " + mainMenuSceneName);
         SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    // =====================================================
+    // RESET ALL GAME STATE
+    // Bersihkan semua singleton dan game state
+    // =====================================================
+
+    private void ResetAllGameState()
+    {
+        Debug.Log("========================================");
+        Debug.Log("RESETTING ALL GAME STATE");
+        Debug.Log("========================================");
+
+        // Reset GameManager singleton
+        if (GameManager.Instance != null)
+        {
+            Destroy(GameManager.Instance.gameObject);
+            GameManager.Instance = null;
+            Debug.Log("GameManager destroyed");
+        }
+
+        // Reset ResourceManager singleton
+        if (ResourceManager.Instance != null)
+        {
+            Destroy(ResourceManager.Instance.gameObject);
+            ResourceManager.Instance = null;
+            Debug.Log("ResourceManager destroyed");
+        }
+
+        // Reset ExpeditionManager singleton
+        if (ExpeditionManager.Instance != null)
+        {
+            Destroy(ExpeditionManager.Instance.gameObject);
+            ExpeditionManager.Instance = null;
+            Debug.Log("ExpeditionManager destroyed");
+        }
+
+        // Reset EventManager singleton
+        if (EventManager.Instance != null)
+        {
+            Destroy(EventManager.Instance.gameObject);
+            EventManager.Instance = null;
+            Debug.Log("EventManager destroyed");
+        }
+
+        // Reset EndingManager singleton (diri sendiri)
+        if (EndingManager.Instance != null)
+        {
+            EndingManager.Instance = null;
+            Debug.Log("EndingManager instance cleared");
+        }
+
+        // Stop all coroutines
+        StopAllCoroutines();
+
+        Debug.Log("All game state reset successfully");
+        Debug.Log("========================================");
     }
 
     // =====================================================
@@ -315,7 +405,7 @@ public class EndingManager : MonoBehaviour
             case EndingType.NormalEnding:
                 return new string[]
                 {
-                    "7 hari telah berlalu...",
+                    "Hari telah berlalu...",
                     "Hanya satu yang tersisa.",
                     "Kesepian menghantuinya.",
                     "NORMAL ENDING"
@@ -333,7 +423,8 @@ public class EndingManager : MonoBehaviour
             case EndingType.Day66Ending:
                 return new string[]
                 {
-                    "66 Hari telah berlalu"
+                    "66 Hari telah berlalu",
+                    "Supply Habis dan keluarga Setiawan mati...."
                 };
 
             case EndingType.Dikorbankan:

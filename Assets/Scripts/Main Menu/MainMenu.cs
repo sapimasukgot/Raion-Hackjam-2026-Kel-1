@@ -59,7 +59,14 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        uiAnimation.EntranceAnimation();
+        if (uiAnimation != null)
+        {
+            uiAnimation.EntranceAnimation();
+        }
+        else
+        {
+            Debug.LogWarning("UIAutoAnimation component not found on MainMenu object!");
+        }
     }
 
     // =====================================================

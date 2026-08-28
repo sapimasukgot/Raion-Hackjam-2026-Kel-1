@@ -303,4 +303,76 @@ public class ResourceItemSpawner : MonoBehaviour
         RefreshAllItems();
         Debug.Log("Resource items force refreshed.");
     }
+
+    // =====================================================
+    // REMOVE ITEM EXTERNALLY
+    // Dipanggil saat item di-destroy oleh DragableItem
+    // =====================================================
+
+    public void RemoveItem(string itemTypeName, GameObject itemToRemove)
+    {
+        if (itemToRemove == null)
+            return;
+
+        switch (itemTypeName)
+        {
+            case "Ration":
+                if (spawnedRations.Contains(itemToRemove))
+                {
+                    spawnedRations.Remove(itemToRemove);
+                    Debug.Log("Ration removed from spawner list");
+                }
+                break;
+
+            case "Medkit":
+                if (spawnedMedkits.Contains(itemToRemove))
+                {
+                    spawnedMedkits.Remove(itemToRemove);
+                    Debug.Log("Medkit removed from spawner list");
+                }
+                break;
+
+            case "Tools":
+                if (spawnedTools.Contains(itemToRemove))
+                {
+                    spawnedTools.Remove(itemToRemove);
+                    Debug.Log("Tools removed from spawner list");
+                }
+                break;
+
+            case "Knife":
+                if (spawnedKnife == itemToRemove)
+                {
+                    spawnedKnife = null;
+                    Debug.Log("Knife removed from spawner list");
+                }
+                break;
+        }
+
+        // Update layout setelah remove
+        UpdateLayoutAfterRemove(itemTypeName);
+    }
+
+    // =====================================================
+    // UPDATE LAYOUT AFTER REMOVE
+    // =====================================================
+
+    private void UpdateLayoutAfterRemove(string itemTypeName)
+    {
+        switch (itemTypeName)
+        {
+            case "Ration":
+                UpdateLayout(spawnedRations, rationSpawnParent);
+                break;
+            case "Medkit":
+                UpdateLayout(spawnedMedkits, medkitSpawnParent);
+                break;
+            case "Tools":
+                UpdateLayout(spawnedTools, toolsSpawnParent);
+                break;
+            case "Knife":
+                // Knife tidak perlu layout
+                break;
+        }
+    }
 }

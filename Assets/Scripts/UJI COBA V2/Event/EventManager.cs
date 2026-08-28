@@ -238,41 +238,51 @@ public class EventManager : MonoBehaviour
     }
 
     private bool ExecuteItemRequirement()
-{
-    bool success = false;
-
-    switch (pendingEvent.requiredItem)
     {
-        case RequiredItemType.Tools:
-            success = ResourceManager.Instance.UseTools(pendingEvent.requiredItemAmount);
-            break;
+        bool success = false;
 
-        case RequiredItemType.Knife:
-            success = ResourceManager.Instance.UseKnife();
+        switch (pendingEvent.requiredItem)
+        {
+            case RequiredItemType.Tools:
+                // Resource sudah dikurangi saat drop, jadi hanya check apakah ada
+                if (GameManager.Instance != null && GameManager.Instance.tools >= pendingEvent.requiredItemAmount)
+                {
+                    success = true;
+                    Debug.Log("Tools available for event: " + GameManager.Instance.tools);
+                }
+                else
+                {
+                    Debug.LogError("Tools tidak cukup untuk event!");
+                }
+                break;
 
-            // Kalau event ini tidak menghabiskan knife (misal Hunting),
-            // langsung balikin lagi setelah dipakai.
-            if (success && !pendingEvent.consumeKnifeOnUse)
-            {
-                ResourceManager.Instance.AddKnife();
+            case RequiredItemType.Knife:
+                // Knife di-handle khusus
+                success = ResourceManager.Instance.UseKnife();
 
-                Debug.Log("Knife dipakai untuk '" + pendingEvent.eventTitle + "' lalu dikembalikan lagi (tidak habis).");
-            }
-            break;
+                // Kalau event ini tidak menghabiskan knife (misal Hunting),
+                // langsung balikin lagi setelah dipakai.
+                if (success && !pendingEvent.consumeKnifeOnUse)
+                {
+                    ResourceManager.Instance.AddKnife();
+
+                    Debug.Log("Knife dipakai untuk '" + pendingEvent.eventTitle + "' lalu dikembalikan lagi (tidak habis).");
+                }
+                break;
+        }
+
+        if (!success)
+        {
+            Debug.LogError("GAGAL menggunakan item untuk event! Resource tidak cukup.");
+            return false; 
+        }
+
+        ApplyRewards();
+
+        Debug.Log("Event '" + pendingEvent.eventTitle + "' berhasil diselesaikan dengan item.");
+
+        return true;  
     }
-
-    if (!success)
-    {
-        Debug.LogError("GAGAL menggunakan item untuk event! Resource tidak cukup.");
-        return false; 
-    }
-
-    ApplyRewards();
-
-    Debug.Log("Event '" + pendingEvent.eventTitle + "' berhasil diselesaikan dengan item.");
-
-    return true;  
-}
 
     private bool ExecuteCharacterSacrifice()
     {

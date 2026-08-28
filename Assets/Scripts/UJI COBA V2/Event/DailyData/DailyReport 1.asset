@@ -21,4 +21,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d84c9ee0487792944acfb01e076f342a, type: 2}
   - {fileID: 11400000, guid: 330c0bc0cabf36a47b6c854c36938340, type: 2}
   canHaveNoEvent: 1
-  noEventChance: 0.321
+  noEventChance: 0

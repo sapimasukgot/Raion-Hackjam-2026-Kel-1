@@ -253,7 +253,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!ResourceManager.Instance.UseRation())
+        // Resource sudah dikurangi saat item di-drop, jadi hanya perlu check apakah ada
+        if (ration <= 0)
         {
             Debug.Log(
                 "Ration habis → " +
@@ -397,7 +398,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!ResourceManager.Instance.UseMedkit())
+        // Resource sudah dikurangi saat item di-drop, jadi hanya perlu check apakah ada
+        if (medkit <= 0)
         {
             Debug.Log(
                 "Treatment GAGAL → Medkit habis."

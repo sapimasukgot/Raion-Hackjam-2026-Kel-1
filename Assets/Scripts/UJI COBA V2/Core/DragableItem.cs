@@ -238,15 +238,39 @@ public class DragableItem : MonoBehaviour,
                 " drop BERHASIL!"
             );
 
-            // Destroy item jika setting enabled
-            if (destroyOnSuccessfulDrop)
+            // Untuk resource consumable: kurangi resource DAN destroy item LANGSUNG
+            if (IsConsumableResource())
             {
-                // Kalau item ini Ration, mainkan SFX makan sebelum dihancurkan
+                // Kalau item ini Ration, mainkan SFX makan
                 if (itemType == ItemType.Ration && SoundManager.Instance != null)
                 {
                     SoundManager.Instance.PlayEating();
                 }
 
+                // KURANGI RESOURCE LANGSUNG
+                ConsumeResourceImmediately();
+
+                Debug.Log(
+                    gameObject.name +
+                    " dikonsumsi dan dihancurkan LANGSUNG"
+                );
+
+                // DESTROY LANGSUNG tanpa delay
+                Destroy(gameObject);
+
+                // Force refresh spawner untuk update jumlah item di UI
+                if (ResourceItemSpawner.Instance != null)
+                {
+                    // Remove item dari spawner list agar tidak ada duplicate
+                    ResourceItemSpawner.Instance.RemoveItem(itemType.ToString(), gameObject);
+                    
+                    // Force refresh untuk pastikan UI up to date
+                    ResourceItemSpawner.Instance.ForceRefresh();
+                }
+            }
+            // Untuk item lain yang punya setting destroyOnSuccessfulDrop
+            else if (destroyOnSuccessfulDrop)
+            {
                 Debug.Log(
                     gameObject.name +
                     " akan dihancurkan dalam " + destroyDelay + "s"
@@ -323,6 +347,84 @@ public class DragableItem : MonoBehaviour,
                itemType == ItemType.Mom ||
                itemType == ItemType.Son ||
                itemType == ItemType.Daughter;
+    }
+
+    // =====================================================
+    // CHECK IF CONSUMABLE RESOURCE
+    // =====================================================
+
+    private bool IsConsumableResource()
+    {
+        // Ration, Medkit, Tools langsung di-consume saat drop
+        // Knife TIDAK termasuk karena di-handle khusus oleh DropZone (Expedition)
+        return itemType == ItemType.Ration ||
+               itemType == ItemType.Medkit ||
+               itemType == ItemType.Tools;
+    }
+
+    // =====================================================
+    // CONSUME RESOURCE IMMEDIATELY
+    // Kurangi resource dari GameManager LANGSUNG saat item di-drop
+    // =====================================================
+
+    private void ConsumeResourceImmediately()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("GameManager.Instance NULL! Resource tidak dikurangi.");
+            return;
+        }
+
+        switch (itemType)
+        {
+            case ItemType.Ration:
+                if (GameManager.Instance.ration > 0)
+                {
+                    GameManager.Instance.ration -= 1;
+                    Debug.Log("Ration consumed IMMEDIATELY (-1). Remaining: " + GameManager.Instance.ration);
+                }
+                else
+                {
+                    Debug.LogWarning("No Ration available to consume!");
+                }
+                break;
+
+            case ItemType.Medkit:
+                if (GameManager.Instance.medkit > 0)
+                {
+                    GameManager.Instance.medkit -= 1;
+                    Debug.Log("Medkit consumed IMMEDIATELY (-1). Remaining: " + GameManager.Instance.medkit);
+                }
+                else
+                {
+                    Debug.LogWarning("No Medkit available to consume!");
+                }
+                break;
+
+            case ItemType.Tools:
+                if (GameManager.Instance.tools > 0)
+                {
+                    GameManager.Instance.tools -= 1;
+                    Debug.Log("Tools consumed IMMEDIATELY (-1). Remaining: " + GameManager.Instance.tools);
+                }
+                else
+                {
+                    Debug.LogWarning("No Tools available to consume!");
+                }
+                break;
+
+            case ItemType.Knife:
+                if (GameManager.Instance.knife)
+                {
+                    GameManager.Instance.knife = false;
+                    Debug.Log("Knife consumed IMMEDIATELY");
+                }
+                else
+                {
+                    Debug.LogWarning("No Knife available to consume!");
+                }
+                break;
+        }
     }
 
     // =====================================================
