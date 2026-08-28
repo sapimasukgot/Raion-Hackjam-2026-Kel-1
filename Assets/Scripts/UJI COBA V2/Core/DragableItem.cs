@@ -46,6 +46,9 @@ public class DragableItem : MonoBehaviour,
     // Reference ke parent layout group
     private UnityEngine.UI.LayoutGroup parentLayoutGroup;
 
+    // Track if character was alive last frame
+    private bool wasAliveLastFrame = true;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -71,6 +74,61 @@ public class DragableItem : MonoBehaviour,
             " HOME POSITION disimpan: " +
             homePosition
         );
+
+        // Check initial status - hide if character is already dead
+        CheckCharacterStatus();
+    }
+
+    private void Update()
+    {
+        // Continuous check for character death
+        CheckCharacterStatus();
+    }
+
+    // =====================================================
+    // CHECK CHARACTER STATUS
+    // Sembunyikan item jika karakter mati
+    // =====================================================
+
+    private void CheckCharacterStatus()
+    {
+        // Only check for character items
+        if (!IsCharacterItem())
+            return;
+
+        bool isAlive = !IsCharacterDead();
+
+        // If character just died (was alive before, now dead)
+        if (wasAliveLastFrame && !isAlive)
+        {
+            Debug.Log(gameObject.name + " CHARACTER DIED - Hiding drag item.");
+            HideItem();
+        }
+        // If character came back to life (was dead before, now alive)
+        else if (!wasAliveLastFrame && isAlive)
+        {
+            ShowItem();
+        }
+
+        wasAliveLastFrame = isAlive;
+    }
+
+    // =====================================================
+    // HIDE ITEM
+    // =====================================================
+
+    private void HideItem()
+    {
+        gameObject.SetActive(false);
+    }
+
+    // =====================================================
+    // SHOW ITEM
+    // =====================================================
+
+    private void ShowItem()
+    {
+        gameObject.SetActive(true);
     }
 
     // =====================================================

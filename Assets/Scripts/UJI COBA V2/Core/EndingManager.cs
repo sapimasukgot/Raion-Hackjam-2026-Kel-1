@@ -12,6 +12,11 @@ public class EndingManager : MonoBehaviour
     [SerializeField] private CanvasGroup endingCanvasGroup;
     [SerializeField] private TMP_Text endingText;
 
+    [Header("Skull/Death Image")]
+    [SerializeField] private GameObject skullImagePanel; // Panel untuk gambar tengkorak
+    [SerializeField] private CanvasGroup skullCanvasGroup;
+    [SerializeField] private float skullDisplayDuration = 5f; // Durasi tampil gambar tengkorak
+
     [Header("Ending Config")]
     [SerializeField] private int finalDay = 7;
     [SerializeField] private string mainMenuSceneName = "MainMenu";
@@ -26,9 +31,10 @@ public class EndingManager : MonoBehaviour
     };
 
     [Header("Timing")]
-    [SerializeField] private float textDisplayDuration = 3f;
-    [SerializeField] private float fadeInDuration = 1f;
-    [SerializeField] private float fadeOutDuration = 1f;
+    [SerializeField] private float textDisplayDuration = 4f; // Diperlambat dari 3f ke 4f
+    [SerializeField] private float fadeInDuration = 2f; // Diperlambat dari 1f ke 2f
+    [SerializeField] private float fadeOutDuration = 2f; // Diperlambat dari 1f ke 2f
+    [SerializeField] private float pauseBetweenLines = 1.5f; // Jeda antar baris text
 
     private void Awake()
     {
@@ -46,8 +52,14 @@ public class EndingManager : MonoBehaviour
         if (endingPanel != null)
             endingPanel.SetActive(false);
 
+        if (skullImagePanel != null)
+            skullImagePanel.SetActive(false);
+
         if (endingCanvasGroup == null && endingPanel != null)
             endingCanvasGroup = endingPanel.GetComponent<CanvasGroup>();
+
+        if (skullCanvasGroup == null && skullImagePanel != null)
+            skullCanvasGroup = skullImagePanel.GetComponent<CanvasGroup>();
     }
 
     // =====================================================
@@ -117,15 +129,24 @@ public class EndingManager : MonoBehaviour
             // Fade in text
             yield return StartCoroutine(FadeInText(line));
 
-            // Display text
+            // Display text (diperlambat)
             yield return new WaitForSeconds(textDisplayDuration);
 
             // Fade out text
             yield return StartCoroutine(FadeOutText());
+
+            // Jeda antar baris
+            yield return new WaitForSeconds(pauseBetweenLines);
         }
 
-        // Wait a bit
-        yield return new WaitForSeconds(1f);
+        // Wait a bit setelah semua text selesai
+        yield return new WaitForSeconds(2f);
+
+        // Tampilkan gambar tengkorak sebelum kembali ke main menu
+        if (skullImagePanel != null)
+        {
+            yield return StartCoroutine(ShowSkullImage());
+        }
 
         // Return to main menu
         Debug.Log("Loading Main Menu: " + mainMenuSceneName);
@@ -190,6 +211,66 @@ public class EndingManager : MonoBehaviour
     }
 
     // =====================================================
+    // SHOW SKULL IMAGE
+    // Tampilkan gambar tengkorak sebelum kembali ke menu
+    // =====================================================
+
+    private IEnumerator ShowSkullImage()
+    {
+        // Sembunyikan ending text panel
+        if (endingPanel != null)
+        {
+            endingPanel.SetActive(false);
+        }
+
+        // Tampilkan skull panel
+        if (skullImagePanel != null)
+        {
+            skullImagePanel.SetActive(true);
+        }
+
+        if (skullCanvasGroup != null)
+        {
+            skullCanvasGroup.alpha = 0f;
+        }
+
+        // Fade in gambar tengkorak
+        float elapsed = 0f;
+        while (elapsed < fadeInDuration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / fadeInDuration);
+
+            if (skullCanvasGroup != null)
+                skullCanvasGroup.alpha = progress;
+
+            yield return null;
+        }
+
+        if (skullCanvasGroup != null)
+            skullCanvasGroup.alpha = 1f;
+
+        // Tampilkan gambar tengkorak selama beberapa detik
+        yield return new WaitForSeconds(skullDisplayDuration);
+
+        // Fade out gambar tengkorak
+        elapsed = 0f;
+        while (elapsed < fadeOutDuration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / fadeOutDuration);
+
+            if (skullCanvasGroup != null)
+                skullCanvasGroup.alpha = 1f - progress;
+
+            yield return null;
+        }
+
+        if (skullCanvasGroup != null)
+            skullCanvasGroup.alpha = 0f;
+    }
+
+    // =====================================================
     // CALCULATE ENDING TYPE (OPTIONAL)
     // Bisa dipake untuk multiple ending
     // =====================================================
@@ -228,23 +309,8 @@ public class EndingManager : MonoBehaviour
     {
         switch (endingType)
         {
-            case EndingType.PerfectEnding:
-                return new string[]
-                {
-                    "7 hari telah berlalu...",
-                    "Keluarga ini berhasil bertahan bersama.",
-                    "Semua masih hidup dan sehat.",
-                    "PERFECT ENDING"
-                };
-
-            case EndingType.GoodEnding:
-                return new string[]
-                {
-                    "7 hari telah berlalu...",
-                    "Keluarga ini kehilangan beberapa anggota.",
-                    "Namun, harapan masih ada.",
-                    "GOOD ENDING"
-                };
+             
+ 
 
             case EndingType.NormalEnding:
                 return new string[]
@@ -260,7 +326,7 @@ public class EndingManager : MonoBehaviour
                 {
                     "7 hari telah berlalu...",
                     "Tidak ada yang tersisa.",
-                    "Bunker ini sekarang kosong.",
+                    "Rumah ini sekarang kosong.",
                     "BAD ENDING"
                 };
 
