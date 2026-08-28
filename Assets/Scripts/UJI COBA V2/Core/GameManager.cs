@@ -1055,14 +1055,26 @@ public class GameManager : MonoBehaviour
         // 11. CHECK ENDING
         // =================================================
 
-        if (EndingManager.Instance != null && EndingManager.Instance.ShouldEndGame(currentDay))
+        bool allCharactersDead =
+            EndingManager.Instance != null &&
+            EndingManager.Instance.IsAllCharactersDead();
+
+        bool reachedFinalDay =
+            EndingManager.Instance != null &&
+            EndingManager.Instance.ShouldEndGame(currentDay);
+
+        if (allCharactersDead || reachedFinalDay)
         {
-            Debug.Log("Game reached final day. Triggering ending...");
-            
+            Debug.Log(
+                allCharactersDead
+                    ? "Semua anggota keluarga meninggal sebelum hari terakhir. Triggering Bad Ending..."
+                    : "Game reached final day. Triggering ending..."
+            );
+
             // Jangan tampilkan report hari berikutnya
             // Langsung trigger ending
             EndingManager.Instance.TriggerEndingWithType();
-            
+
             return; // Stop execution
         }
 
