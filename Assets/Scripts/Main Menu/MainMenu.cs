@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject storyPanel;
+    [SerializeField] private GameObject pausePanel;
 
     private MainMenuAudio audioManager;
 
@@ -48,6 +49,8 @@ public class MainMenu : MonoBehaviour
             creditsPanel.SetActive(false);
         if (storyPanel != null)
             storyPanel.SetActive(false);
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
 
         // Get story canvas group from text element if not assigned
         if (storyText != null && storyCanvasGroup == null)
@@ -163,6 +166,47 @@ public class MainMenu : MonoBehaviour
     }
 
     // =====================================================
+    // PAUSE
+    // =====================================================
+
+    public void OnPauseButtonClicked()
+    {
+        Debug.Log("Pause button clicked");
+        MainMenuAudio.PlayButtonClick();
+
+        if (pausePanel == null)
+            return;
+
+        pausePanel.SetActive(true);
+
+        RectTransform pauseRect = pausePanel.GetComponent<RectTransform>();
+        CanvasGroup pauseCanvasGroup = pausePanel.GetComponent<CanvasGroup>();
+
+        if (pauseCanvasGroup != null)
+        {
+            pauseCanvasGroup.alpha = 0f;
+        }
+
+        if (pauseRect != null)
+        {
+            pauseRect.localScale = Vector3.one * uiOpenScale;
+        }
+
+        StartCoroutine(AnimateUIOpen(pausePanel, uiOpenDuration));
+    }
+
+    public void OnPauseCloseButtonClicked()
+    {
+        Debug.Log("Pause close button clicked");
+        MainMenuAudio.PlayButtonClick();
+
+        if (pausePanel == null)
+            return;
+
+        StartCoroutine(AnimateUIClose(pausePanel, uiCloseDuration));
+    }
+
+    // =====================================================
     // SETTINGS
     // =====================================================
 
@@ -206,7 +250,9 @@ public class MainMenu : MonoBehaviour
     // =====================================================
     // CREDITS
     // =====================================================
-
+    public void SkipCutScene(){
+          SceneManager.LoadScene(gameSceneName);
+    }
     public void OnCreditsButtonClicked()
     {
         Debug.Log("Credits button clicked");

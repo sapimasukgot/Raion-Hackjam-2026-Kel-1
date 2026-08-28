@@ -23,6 +23,7 @@ public class ResourceItemSpawner : MonoBehaviour
 
     [Header("Refresh Interval")]
     [SerializeField] private float autoRefreshInterval = 0.5f;
+    [SerializeField] private bool pauseRefreshWhileDragging = true;
 
     private List<GameObject> spawnedRations = new List<GameObject>();
     private List<GameObject> spawnedMedkits = new List<GameObject>();
@@ -30,6 +31,7 @@ public class ResourceItemSpawner : MonoBehaviour
     private GameObject spawnedKnife;
 
     private float lastRefreshTime;
+    private static bool isAnyItemBeingDragged = false;
 
     private void Awake()
     {
@@ -50,11 +52,35 @@ public class ResourceItemSpawner : MonoBehaviour
 
     private void Update()
     {
+        // Jangan refresh saat ada item yang sedang di-drag
+        if (pauseRefreshWhileDragging && isAnyItemBeingDragged)
+        {
+            return;
+        }
+
         // Auto refresh tiap interval
         if (Time.time - lastRefreshTime > autoRefreshInterval)
         {
             RefreshAllItems();
             lastRefreshTime = Time.time;
+        }
+    }
+
+    // =====================================================
+    // DRAG STATE MANAGEMENT
+    // =====================================================
+
+    public static void SetDragging(bool isDragging)
+    {
+        isAnyItemBeingDragged = isDragging;
+        
+        if (isDragging)
+        {
+            Debug.Log("Item sedang di-drag. Refresh paused.");
+        }
+        else
+        {
+            Debug.Log("Drag selesai. Refresh resumed.");
         }
     }
 

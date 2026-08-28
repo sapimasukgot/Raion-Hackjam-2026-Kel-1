@@ -89,6 +89,9 @@ public class DragableItem : MonoBehaviour,
         // Disable parent layout group saat drag
         DisableParentLayoutGroup();
 
+        // Notify spawner untuk pause refresh
+        ResourceItemSpawner.SetDragging(true);
+
         Debug.Log(
             gameObject.name +
             " mulai di-drag."
@@ -114,6 +117,9 @@ public class DragableItem : MonoBehaviour,
 
         // Re-enable parent layout group
         EnableParentLayoutGroup();
+
+        // Notify spawner untuk resume refresh
+        ResourceItemSpawner.SetDragging(false);
 
         Debug.Log(
             gameObject.name +
