@@ -72,7 +72,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         dragItem.SetDropped(true);
 
         // Jalankan aksi
-        SetPendingAction(itemType);
+        SetPendingAction(itemType, dragItem);
     }
 
     // =====================================================
@@ -227,7 +227,8 @@ public class DropZone : MonoBehaviour, IDropHandler
     // =====================================================
 
     private void SetPendingAction(
-        DragableItem.ItemType itemType
+        DragableItem.ItemType itemType,
+        DragableItem dragItem
     )
     {
         // =================================================
@@ -547,6 +548,20 @@ public class DropZone : MonoBehaviour, IDropHandler
                 itemType == DragableItem.ItemType.Son ||
                 itemType == DragableItem.ItemType.Daughter)
             {
+                // CHECK: Apakah hanya 1 anggota keluarga yang hidup (3 mati)?
+                if (IsOnlyOneFamilyMemberAlive())
+                {
+                    Debug.LogWarning("EKSPEDISI DITOLAK: Hanya 1 anggota keluarga yang masih hidup. Tidak bisa ekspedisi!");
+                    
+                    // Kembalikan karakter ke posisi awal
+                    if (dragItem != null)
+                    {
+                        dragItem.SetDropped(false); // Mark as not dropped successfully
+                    }
+                    
+                    return;
+                }
+
                 CharacterData expeditionCharacter = null;
 
                 switch (itemType)
@@ -613,5 +628,31 @@ public class DropZone : MonoBehaviour, IDropHandler
         }
 
 
+    }
+
+    // =====================================================
+    // CHECK IF ONLY ONE FAMILY MEMBER ALIVE
+    // =====================================================
+
+    private bool IsOnlyOneFamilyMemberAlive()
+    {
+        if (GameManager.Instance == null)
+            return false;
+
+        int aliveCount = 0;
+
+        if (GameManager.Instance.dad != null && GameManager.Instance.dad.isAlive)
+            aliveCount++;
+
+        if (GameManager.Instance.mom != null && GameManager.Instance.mom.isAlive)
+            aliveCount++;
+
+        if (GameManager.Instance.son != null && GameManager.Instance.son.isAlive)
+            aliveCount++;
+
+        if (GameManager.Instance.daughter != null && GameManager.Instance.daughter.isAlive)
+            aliveCount++;
+
+        return aliveCount <= 1;
     }
 }

@@ -80,6 +80,13 @@ public class DragableItem : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        // Check if this is a dead family member
+        if (IsCharacterItem() && IsCharacterDead())
+        {
+            Debug.Log(gameObject.name + " is DEAD. Cannot drag.");
+            return;
+        }
+
         originalPosition = rectTransform.position;
 
         droppedSuccessfully = false;
@@ -104,6 +111,12 @@ public class DragableItem : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
+        // Check if this is a dead family member
+        if (IsCharacterItem() && IsCharacterDead())
+        {
+            return;
+        }
+
         rectTransform.position = eventData.position;
     }
 
@@ -113,6 +126,12 @@ public class DragableItem : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        // Check if this is a dead family member
+        if (IsCharacterItem() && IsCharacterDead())
+        {
+            return;
+        }
+
         canvasGroup.blocksRaycasts = true;
 
         // Re-enable parent layout group
@@ -216,6 +235,59 @@ public class DragableItem : MonoBehaviour,
         {
             parentLayoutGroup.enabled = true;
             Debug.Log("Parent layout group re-enabled.");
+        }
+    }
+
+    // =====================================================
+    // CHECK IF CHARACTER ITEM
+    // =====================================================
+
+    private bool IsCharacterItem()
+    {
+        return itemType == ItemType.Dad ||
+               itemType == ItemType.Mom ||
+               itemType == ItemType.Son ||
+               itemType == ItemType.Daughter;
+    }
+
+    // =====================================================
+    // CHECK IF CHARACTER IS DEAD
+    // =====================================================
+
+    private bool IsCharacterDead()
+    {
+        if (GameManager.Instance == null)
+            return false;
+
+        CharacterData character = GetCharacterData();
+        
+        if (character == null)
+            return false;
+
+        return !character.isAlive;
+    }
+
+    // =====================================================
+    // GET CHARACTER DATA
+    // =====================================================
+
+    private CharacterData GetCharacterData()
+    {
+        if (GameManager.Instance == null)
+            return null;
+
+        switch (itemType)
+        {
+            case ItemType.Dad:
+                return GameManager.Instance.dad;
+            case ItemType.Mom:
+                return GameManager.Instance.mom;
+            case ItemType.Son:
+                return GameManager.Instance.son;
+            case ItemType.Daughter:
+                return GameManager.Instance.daughter;
+            default:
+                return null;
         }
     }
 }
