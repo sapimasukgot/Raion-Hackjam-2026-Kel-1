@@ -96,37 +96,11 @@ public class DayTransitionUI : MonoBehaviour
         if (nextDayButton == null)
             return;
 
-        // Cek apakah ada event yang harus diselesaikan
-        bool canProceed = true;
-        string reason = "";
+        nextDayButton.interactable = true;
 
-        if (EventManager.Instance != null)
-        {
-            canProceed = EventManager.Instance.CanProceedNextDay();
-            reason = EventManager.Instance.GetEventBlockReason();
-
-            // Debug log (hapus setelah test)
-            if (!canProceed && Time.frameCount % 60 == 0) // Log tiap 60 frame
-            {
-                Debug.Log("Next Day BLOCKED: " + reason);
-                Debug.Log("Has Pending Event: " + EventManager.Instance.hasPendingEvent);
-            }
-        }
-
-        // Update button interactable
-        nextDayButton.interactable = canProceed;
-
-        // Update button text
         if (nextDayButtonText != null)
         {
-            if (canProceed)
-            {
-                nextDayButtonText.text = normalButtonText;
-            }
-            else
-            {
-                nextDayButtonText.text = blockedButtonText;
-            }
+            nextDayButtonText.text = normalButtonText;
         }
     }
 

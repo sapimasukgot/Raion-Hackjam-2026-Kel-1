@@ -43,6 +43,8 @@ public class CharacterData
     // =====================================================
 
     public bool canExpedition = true;
+    public bool isExpedition = false; // Sedang pergi ekspedisi
+    public bool expeditionHasKnife = false; // Bawa pisau saat pergi?
 
     public float expeditionFailChanceBonus = 0f;
 
@@ -76,6 +78,8 @@ public class CharacterData
         missingLeg = false;
 
         canExpedition = true;
+        isExpedition = false;
+        expeditionHasKnife = false;
         expeditionFailChanceBonus = 0f;
 
         missingDays = 0;

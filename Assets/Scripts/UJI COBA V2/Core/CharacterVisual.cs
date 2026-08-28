@@ -33,54 +33,16 @@ public class CharacterVisual : MonoBehaviour
     [Header("Normal")]
     [SerializeField] private Sprite normalSprite;
 
-
     // =====================================================
-    // HUNGER SPRITES
-    // =====================================================
-
-    [Header("Hunger")]
-    [SerializeField] private Sprite hungrySprite;
-    [SerializeField] private Sprite starvingSprite;
-
-
-    // =====================================================
-    // INJURY SPRITE
+    // MISSING LIMBS
     // =====================================================
 
-    [Header("Injured")]
-    [SerializeField] private Sprite injuredSprite;
-
-
-    // =====================================================
-    // MISSING ARM
-    // =====================================================
-
-    [Header("Missing Arm")]
-    [SerializeField] private Sprite missingArmSprite;
-
-
-    // =====================================================
-    // MISSING ARM + INJURY
-    // =====================================================
-
-    [Header("Missing Arm + Injured")]
-    [SerializeField] private Sprite missingArmInjuredSprite;
-
-
-    // =====================================================
-    // MISSING ARM + HUNGER
-    // =====================================================
-
-    [Header("Missing Arm + Hungry")]
-    [SerializeField] private Sprite missingArmHungrySprite;
-
-
-    // =====================================================
-    // MISSING ARM + STARVING
-    // =====================================================
-
-    [Header("Missing Arm + Starving")]
-    [SerializeField] private Sprite missingArmStarvingSprite;
+    [Header("Missing Limbs")]
+    [SerializeField] private Sprite oneArmMissingSprite;
+    [SerializeField] private Sprite twoArmsMissingSprite;
+    [SerializeField] private Sprite twoArmsOneLegMissingSprite;
+    [SerializeField] private Sprite twoArmsTwoLegsMissingSprite;
+    [SerializeField] private Sprite oneArmTwoLegsMissingSprite;
 
 
     // =====================================================
@@ -92,10 +54,10 @@ public class CharacterVisual : MonoBehaviour
 
 
     // =====================================================
-    // MISSING
+    // MISSING / EXPEDITION
     // =====================================================
 
-    [Header("Missing")]
+    [Header("Missing / Expedition")]
     [SerializeField] private bool hideWhenMissing = true;
 
 
@@ -153,10 +115,10 @@ public class CharacterVisual : MonoBehaviour
 
 
         // =================================================
-        // DEAD
+        // DEAD / MISSING / EXPEDITION → HIDE
         // =================================================
 
-        if (!character.isAlive)
+        if (!character.isAlive || character.isMissing || character.isExpedition)
         {
             ShowDead(character);
             return;
@@ -164,18 +126,7 @@ public class CharacterVisual : MonoBehaviour
 
 
         // =================================================
-        // MISSING
-        // =================================================
-
-        if (character.isMissing)
-        {
-            ShowMissing(character);
-            return;
-        }
-
-
-        // =================================================
-        // ALIVE
+        // ALIVE - SHOW SPRITE
         // =================================================
 
         spriteRenderer.enabled = true;
@@ -221,232 +172,76 @@ public class CharacterVisual : MonoBehaviour
     )
     {
         // =================================================
-        // MISSING ARM + INJURED
-        // Prioritas paling tinggi
+        // PRIORITY: MISSING LIMBS (Paling Parah → Normal)
         // =================================================
 
-        if (
-            character.missingArm &&
-            character.isInjured
-        )
-        {
-            if (missingArmInjuredSprite != null)
-            {
-                spriteRenderer.sprite =
-                    missingArmInjuredSprite;
-            }
-            else if (missingArmSprite != null)
-            {
-                spriteRenderer.sprite =
-                    missingArmSprite;
-            }
-            else if (injuredSprite != null)
-            {
-                spriteRenderer.sprite =
-                    injuredSprite;
-            }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
+        spriteRenderer.enabled = true;
 
-            return;
+        // 1. Tangan buntung 2 + Kaki buntung 2
+        if (character.missingArm && character.missingLeg)
+        {
+            if (twoArmsTwoLegsMissingSprite != null)
+            {
+                spriteRenderer.sprite = twoArmsTwoLegsMissingSprite;
+                return;
+            }
         }
 
-
-        // =================================================
-        // MISSING ARM + STARVING
-        // =================================================
-
-        if (
-            character.missingArm &&
-            character.hungerState ==
-            HungerState.Starving
-        )
+        // 2. Tangan buntung 2 + Kaki buntung 1
+        if (character.missingArm && character.missingLeg)
         {
-            if (missingArmStarvingSprite != null)
+            if (twoArmsOneLegMissingSprite != null)
             {
-                spriteRenderer.sprite =
-                    missingArmStarvingSprite;
+                spriteRenderer.sprite = twoArmsOneLegMissingSprite;
+                return;
             }
-            else if (missingArmSprite != null)
-            {
-                spriteRenderer.sprite =
-                    missingArmSprite;
-            }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
         }
 
-
-        // =================================================
-        // MISSING ARM + HUNGRY
-        // =================================================
-
-        if (
-            character.missingArm &&
-            character.hungerState ==
-            HungerState.Hungry
-        )
-        {
-            if (missingArmHungrySprite != null)
-            {
-                spriteRenderer.sprite =
-                    missingArmHungrySprite;
-            }
-            else if (missingArmSprite != null)
-            {
-                spriteRenderer.sprite =
-                    missingArmSprite;
-            }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
-        }
-
-
-        // =================================================
-        // MISSING ARM
-        // =================================================
-
+        // 3. Tangan buntung 2
         if (character.missingArm)
         {
-            if (missingArmSprite != null)
+            if (twoArmsMissingSprite != null)
             {
-                spriteRenderer.sprite =
-                    missingArmSprite;
+                spriteRenderer.sprite = twoArmsMissingSprite;
+                return;
             }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
         }
 
-
-        // =================================================
-        // INJURED
-        // =================================================
-
-        if (character.isInjured)
+        // 4. Tangan buntung 1 + Kaki buntung 2
+        if (character.missingLeg)
         {
-            if (injuredSprite != null)
+            if (oneArmTwoLegsMissingSprite != null)
             {
-                spriteRenderer.sprite =
-                    injuredSprite;
+                spriteRenderer.sprite = oneArmTwoLegsMissingSprite;
+                return;
             }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
         }
 
-
-        // =================================================
-        // STARVING
-        // =================================================
-
-        if (
-            character.hungerState ==
-            HungerState.Starving
-        )
+        // 5. Tangan buntung 1
+        if (character.missingArm)
         {
-            if (starvingSprite != null)
+            if (oneArmMissingSprite != null)
             {
-                spriteRenderer.sprite =
-                    starvingSprite;
+                spriteRenderer.sprite = oneArmMissingSprite;
+                return;
             }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
         }
 
-
-        // =================================================
-        // HUNGRY
-        // =================================================
-
-        if (
-            character.hungerState ==
-            HungerState.Hungry
-        )
-        {
-            if (hungrySprite != null)
-            {
-                spriteRenderer.sprite =
-                    hungrySprite;
-            }
-            else
-            {
-                spriteRenderer.sprite =
-                    normalSprite;
-            }
-
-            return;
-        }
-
-
-        // =================================================
-        // NORMAL
-        // =================================================
-
-        spriteRenderer.sprite =
-            normalSprite;
+        // 6. NORMAL
+        spriteRenderer.sprite = normalSprite;
     }
 
 
     // =====================================================
-    // DEAD
+    // DEAD / MISSING / EXPEDITION
     // =====================================================
 
     private void ShowDead(
         CharacterData character
     )
     {
-        spriteRenderer.enabled = true;
-
-        if (deadSprite != null)
-        {
-            spriteRenderer.sprite =
-                deadSprite;
-        }
-        else
-        {
-            // Kalau belum punya sprite dead,
-            // sembunyikan character.
-            spriteRenderer.enabled = false;
-        }
-    }
-
-
-    // =====================================================
-    // MISSING
-    // =====================================================
-
-    private void ShowMissing(
-        CharacterData character
-    )
-    {
-        if (hideWhenMissing)
+        // Hide untuk dead, missing, expedition
+        if (hideWhenMissing || !character.isAlive)
         {
             spriteRenderer.enabled = false;
         }
@@ -454,10 +249,9 @@ public class CharacterVisual : MonoBehaviour
         {
             spriteRenderer.enabled = true;
 
-            if (normalSprite != null)
+            if (deadSprite != null)
             {
-                spriteRenderer.sprite =
-                    normalSprite;
+                spriteRenderer.sprite = deadSprite;
             }
         }
     }

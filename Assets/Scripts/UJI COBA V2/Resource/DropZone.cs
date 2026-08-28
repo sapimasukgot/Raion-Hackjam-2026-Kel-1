@@ -11,7 +11,8 @@ public class DropZone : MonoBehaviour, IDropHandler
         MemoSon,
         Diary,
         Door,
-        EventSacrifice
+        EventSacrifice,
+        Expedition
     }
 
     [SerializeField] private DropZoneType dropZoneType;
@@ -21,22 +22,26 @@ public class DropZone : MonoBehaviour, IDropHandler
         GameObject droppedObject = eventData.pointerDrag;
 
         if (droppedObject == null)
+        {
+            Debug.LogWarning("DropZone: droppedObject NULL");
             return;
+        }
 
         DragableItem dragItem =
             droppedObject.GetComponent<DragableItem>();
 
         if (dragItem == null)
+        {
+            Debug.LogWarning("DropZone: DragableItem component NULL di " + droppedObject.name);
             return;
+        }
 
         DragableItem.ItemType itemType =
             dragItem.GetItemType();
 
-        Debug.Log(
-            droppedObject.name +
-            " mencoba drop ke " +
-            gameObject.name
-        );
+        Debug.Log("========================================");
+        Debug.Log("DROP ATTEMPT: " + droppedObject.name + " (" + itemType + ") → " + gameObject.name + " (" + dropZoneType + ")");
+        Debug.Log("========================================");
 
         // =====================================================
         // CEK CHARACTER MISSING
@@ -44,14 +49,7 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         if (IsCharacterMissing(itemType))
         {
-            Debug.Log(
-                "DROP INVALID: " +
-                droppedObject.name +
-                " → " +
-                gameObject.name +
-                " | Character sedang Missing."
-            );
-
+            Debug.LogWarning("DROP FAILED: Character sedang Missing.");
             return;
         }
 
@@ -59,30 +57,19 @@ public class DropZone : MonoBehaviour, IDropHandler
         // VALIDASI DROP
         // =====================================================
 
-        if (!IsValidDrop(itemType))
-        {
-            Debug.Log(
-                "DROP INVALID: " +
-                droppedObject.name +
-                " → " +
-                gameObject.name
-            );
+        bool isValid = IsValidDrop(itemType);
 
+        if (!isValid)
+        {
+            Debug.LogWarning("DROP FAILED: Item tidak valid untuk zone " + dropZoneType);
+            Debug.LogWarning("Item type: " + itemType);
             return;
         }
 
-        Debug.Log(
-            "DROP VALID: " +
-            droppedObject.name +
-            " → " +
-            gameObject.name
-        );
+        Debug.Log("DROP SUCCESS: Valid drop!");
 
         // Tandai drop berhasil
         dragItem.SetDropped(true);
-
-        // Jangan memindahkan posisi object ke DropZone.
-        // Posisi object tetap ditentukan oleh sistem drag.
 
         // Jalankan aksi
         SetPendingAction(itemType);
@@ -165,6 +152,20 @@ public class DropZone : MonoBehaviour, IDropHandler
                 }
 
                 return false;
+
+            case DropZoneType.Expedition:
+
+                // Karakter atau pisau
+                return itemType ==
+                           DragableItem.ItemType.Dad ||
+                       itemType ==
+                           DragableItem.ItemType.Mom ||
+                       itemType ==
+                           DragableItem.ItemType.Son ||
+                       itemType ==
+                           DragableItem.ItemType.Daughter ||
+                       itemType ==
+                           DragableItem.ItemType.Knife;
 
             default:
                 return false;
@@ -548,6 +549,91 @@ public class DropZone : MonoBehaviour, IDropHandler
                             ? "Pending item requirement untuk event. Akan dieksekusi saat NextDay."
                             : "Gagal menyimpan pending item requirement."
                     );
+                }
+            }
+        }
+
+        // =================================================
+        // EXPEDITION
+        // =================================================
+
+        if (dropZoneType == DropZoneType.Expedition)
+        {
+            // Ensure ExpeditionManager exists
+            if (ExpeditionManager.Instance == null)
+            {
+                GameObject expeditionManagerObj = new GameObject("ExpeditionManager");
+                ExpeditionManager.Instance = expeditionManagerObj.AddComponent<ExpeditionManager>();
+                Debug.Log("ExpeditionManager auto-created.");
+            }
+
+            // --- Kasus 1: yang di-drop adalah KARAKTER ---
+            if (itemType == DragableItem.ItemType.Dad ||
+                itemType == DragableItem.ItemType.Mom ||
+                itemType == DragableItem.ItemType.Son ||
+                itemType == DragableItem.ItemType.Daughter)
+            {
+                CharacterData expeditionCharacter = null;
+
+                switch (itemType)
+                {
+                    case DragableItem.ItemType.Dad:
+                        expeditionCharacter = GameManager.Instance.dad;
+                        break;
+
+                    case DragableItem.ItemType.Mom:
+                        expeditionCharacter = GameManager.Instance.mom;
+                        break;
+
+                    case DragableItem.ItemType.Son:
+                        expeditionCharacter = GameManager.Instance.son;
+                        break;
+
+                    case DragableItem.ItemType.Daughter:
+                        expeditionCharacter = GameManager.Instance.daughter;
+                        break;
+                }
+
+                if (expeditionCharacter != null)
+                {
+                    // Cek apakah membawa pisau
+                    bool bringKnife = ExpeditionManager.Instance.isBringingKnife;
+
+                    // SAVE PENDING EXPEDITION
+                    bool saved = ExpeditionManager.Instance.SavePendingExpedition(expeditionCharacter, bringKnife);
+
+                    Debug.Log(
+                        saved
+                            ? "Pending Expedition: " + expeditionCharacter.characterName + " | Bring Knife: " + bringKnife
+                            : "Gagal menyimpan pending expedition untuk " + expeditionCharacter.characterName
+                    );
+                }
+                else
+                {
+                    Debug.LogError("Expedition character NULL!");
+                }
+            }
+
+            // --- Kasus 2: yang di-drop adalah PISAU (opsional) ---
+            if (itemType == DragableItem.ItemType.Knife)
+            {
+                if (ExpeditionManager.Instance != null)
+                {
+                    // Set bringing knife = true
+                    ExpeditionManager.Instance.isBringingKnife = true;
+
+                    Debug.Log("Knife dibawa untuk expedition! Loot odds increased.");
+
+                    // Hancurkan knife item (karena konsumsi)
+                    if (GameManager.Instance != null)
+                    {
+                        GameManager.Instance.knife = false;
+                        Debug.Log("Knife consumed. GameManager.knife = false");
+                    }
+                    else
+                    {
+                        Debug.LogError("GameManager.Instance NULL! Knife tidak dikonsumsi.");
+                    }
                 }
             }
         }

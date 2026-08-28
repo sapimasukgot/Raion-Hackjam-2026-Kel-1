@@ -745,16 +745,17 @@ public class GameManager : MonoBehaviour
 
         Debug.Log(
             character.characterName +
-            " sudah pergi selama " +
+            " sudah pergi/hilang selama " +
             character.missingDays +
             " hari."
         );
 
         // =================================================
-        // BALIK SETELAH 1 HARI
+        // BALIK SETELAH 1 HARI (JIKA BUKAN EKSPEDISI)
+        // Kalau Ekspedisi, dihandle oleh ExpeditionManager
         // =================================================
 
-        if (character.missingDays >= 1)
+        if (character.missingDays >= 1 && !character.isExpedition)
         {
             character.isMissing = false;
 
@@ -766,7 +767,7 @@ public class GameManager : MonoBehaviour
 
             Debug.Log(
                 character.characterName +
-                " kembali ke rumah."
+                " kembali ke rumah dari missing biasa."
             );
         }
     }
@@ -1010,16 +1011,25 @@ public class GameManager : MonoBehaviour
         ProcessPendingExit();
 
         // =================================================
-        // 6. RANDOM EVENT - Execute Pending Event
+        // 5.5. EXPEDITION DEPARTURE
         // =================================================
 
-        if (EventManager.Instance != null)
+        if (ExpeditionManager.Instance != null)
         {
-            EventManager.Instance.ExecutePendingEvent();
+            ExpeditionManager.Instance.ExecutePendingExpedition();
         }
 
         // =================================================
-        // 7. INJURY CONSEQUENCE
+        // 5.6. EXPEDITION RETURN
+        // =================================================
+
+        if (ExpeditionManager.Instance != null)
+        {
+            ExpeditionManager.Instance.ProcessReturningExpeditions();
+        }
+
+        // =================================================
+        // 6. INJURY CONSEQUENCE
         // =================================================
 
         ProcessInjuryConsequences();
