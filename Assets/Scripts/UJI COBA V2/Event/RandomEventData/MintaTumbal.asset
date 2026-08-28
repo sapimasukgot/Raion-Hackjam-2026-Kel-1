@@ -16,11 +16,11 @@ MonoBehaviour:
   eventDescription: MINTA TUMBAL
   eventIcon: {fileID: 0}
   weight: 1
-  requirementType: 0
+  requirementType: 2
   requiredItem: 0
   requiredItemAmount: 1
-  consumeKnifeOnUse: 1
-  requiredBodyPart: 0
+  consumeKnifeOnUse: 0
+  requiredBodyPart: 3
   gainRation: 0
   gainMedkit: 0
   gainTools: 0
