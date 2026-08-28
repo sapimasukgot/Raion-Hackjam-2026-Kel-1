@@ -51,6 +51,28 @@ public class EndingManager : MonoBehaviour
     }
 
     // =====================================================
+    // CHECK IF ALL CHARACTERS ARE DEAD
+    // Dipakai untuk trigger Bad Ending lebih awal,
+    // sebelum finalDay tercapai.
+    // =====================================================
+
+    public bool IsAllCharactersDead()
+    {
+        if (GameManager.Instance == null)
+            return false;
+
+        GameManager gm = GameManager.Instance;
+
+        bool dadDead = gm.dad == null || !gm.dad.isAlive;
+        bool momDead = gm.mom == null || !gm.mom.isAlive;
+        bool sonDead = gm.son == null || !gm.son.isAlive;
+        bool daughterDead = gm.daughter == null || !gm.daughter.isAlive;
+
+        return dadDead && momDead && sonDead && daughterDead;
+    }
+
+
+    // =====================================================
     // CHECK IF GAME SHOULD END
     // =====================================================
 
