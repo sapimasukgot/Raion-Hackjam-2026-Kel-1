@@ -90,8 +90,36 @@ public class ReportUIController : MonoBehaviour
 
         bool forceNoEvent = IsNoEventDay(day);
 
-        // Ambil event random dari pool (atau dipaksa null kalau hari ini termasuk noEventDays)
-        RandomEventSO chosenEvent = report.GetRandomEvent(forceNoEvent);
+        RandomEventSO chosenEvent = null;
+        bool usedOverride = false;
+
+        // Cek dulu apakah ada override dari konsekuensi event kemarin
+        // (misal: Jendela rusak tidak diperbaiki → besok 99% Hunting, 1% Game Over)
+        if (EventManager.Instance != null)
+        {
+            usedOverride = EventManager.Instance.TryConsumeOverrideEvent(
+                out RandomEventSO forcedEvent,
+                out bool gameOverTriggered
+            );
+
+            if (usedOverride)
+            {
+                if (gameOverTriggered)
+                {
+                    // Game Over sudah dipicu oleh EventManager (sisa persentase kena).
+                    // Hentikan proses render report/event, jangan lanjut apapun lagi.
+                    return;
+                }
+
+                chosenEvent = forcedEvent;
+            }
+        }
+
+        // Kalau tidak ada override, pakai pool random event biasa dari report hari ini
+        if (!usedOverride)
+        {
+            chosenEvent = report.GetRandomEvent(forceNoEvent);
+        }
 
         // Daftarkan event ini sebagai event aktif di EventManager
         // (dipakai DropZone.EventSacrifice & tombol resolve item untuk tahu event apa yang harus diselesaikan)
@@ -141,16 +169,15 @@ public class ReportUIController : MonoBehaviour
         }
     }
 
-    // Dipanggil oleh tombol "Selesaikan" untuk event bertipe Item (Tools/Knife)
+    // Dipanggil oleh tombol "Selesaikan" untuk event bertipe Item (Tools/Knife).
+    // Ini cuma MENYIMPAN pending — efek beneran baru dieksekusi saat GameManager.NextDay()
+    // memanggil EventManager.ExecutePendingEvent().
     public void OnResolveItemButtonClicked()
     {
         if (EventManager.Instance == null)
             return;
 
-        // GUNAKAN METHOD BARU - SAVE PENDING
         bool saved = EventManager.Instance.SavePendingItemRequirement();
-
-        Debug.Log("Item requirement button clicked. Saved: " + saved);
 
         if (saved && itemRequirementUI != null)
         {

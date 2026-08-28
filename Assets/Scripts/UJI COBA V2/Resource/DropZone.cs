@@ -235,18 +235,6 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         if (itemType == DragableItem.ItemType.Ration)
         {
-            // CEK RESOURCE DULU
-            if (GameManager.Instance.ration <= 0)
-            {
-                Debug.LogWarning("Ration habis! Tidak bisa drop.");
-                return;
-            }
-
-            // LANGSUNG KURANGI RESOURCE
-            GameManager.Instance.ration--;
-
-            Debug.Log("Ration digunakan. Tersisa: " + GameManager.Instance.ration);
-
             switch (dropZoneType)
             {
                 case DropZoneType.MemoDad:
@@ -305,18 +293,6 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         if (itemType == DragableItem.ItemType.Medkit)
         {
-            // CEK RESOURCE DULU
-            if (GameManager.Instance.medkit <= 0)
-            {
-                Debug.LogWarning("Medkit habis! Tidak bisa drop.");
-                return;
-            }
-
-            // LANGSUNG KURANGI RESOURCE
-            GameManager.Instance.medkit--;
-
-            Debug.Log("Medkit digunakan. Tersisa: " + GameManager.Instance.medkit);
-
             switch (dropZoneType)
             {
                 case DropZoneType.MemoDad:
@@ -524,13 +500,12 @@ public class DropZone : MonoBehaviour, IDropHandler
 
             if (sacrificedCharacter != null && EventManager.Instance != null)
             {
-                // SAVE PENDING - tidak langsung execute
-                bool saved = EventManager.Instance.SavePendingCharacterSacrifice(sacrificedCharacter);
+                bool resolved = EventManager.Instance.SavePendingCharacterSacrifice(sacrificedCharacter);
 
                 Debug.Log(
-                    saved
-                        ? "Pending sacrifice: " + sacrificedCharacter.characterName + " untuk event. Akan dieksekusi saat NextDay."
-                        : "Gagal menyimpan pending sacrifice untuk " + sacrificedCharacter.characterName
+                    resolved
+                        ? sacrificedCharacter.characterName + " berhasil dikorbankan untuk event."
+                        : "Pengorbanan " + sacrificedCharacter.characterName + " GAGAL diproses."
                 );
             }
 
@@ -540,13 +515,12 @@ public class DropZone : MonoBehaviour, IDropHandler
             {
                 if (EventManager.Instance != null)
                 {
-                    // SAVE PENDING - tidak langsung execute
-                    bool saved = EventManager.Instance.SavePendingItemRequirement();
+                    bool resolved = EventManager.Instance.SavePendingItemRequirement();
 
                     Debug.Log(
-                        saved
-                            ? "Pending item requirement untuk event. Akan dieksekusi saat NextDay."
-                            : "Gagal menyimpan pending item requirement."
+                        resolved
+                            ? "Event berhasil diselesaikan dengan " + itemType
+                            : "Gagal menyelesaikan event dengan " + itemType
                     );
                 }
             }
