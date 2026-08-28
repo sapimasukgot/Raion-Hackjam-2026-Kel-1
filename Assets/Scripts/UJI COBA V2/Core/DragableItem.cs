@@ -141,6 +141,12 @@ public class DragableItem : MonoBehaviour,
             // Destroy item jika setting enabled
             if (destroyOnSuccessfulDrop)
             {
+                // Kalau item ini Ration, mainkan SFX makan sebelum dihancurkan
+                if (itemType == ItemType.Ration && SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlayEating();
+                }
+
                 Debug.Log(
                     gameObject.name +
                     " akan dihancurkan dalam " + destroyDelay + "s"
