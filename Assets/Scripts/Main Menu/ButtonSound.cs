@@ -41,7 +41,7 @@ public class ButtonSound : MonoBehaviour
         }
     }
 
-    private void PlayClickSound()
+    public void PlayClickSound()
     {
         if (clickSound != null && sharedAudioSource != null)
         {

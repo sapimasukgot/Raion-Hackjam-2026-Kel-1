@@ -22,6 +22,10 @@ public class DragableItem : MonoBehaviour,
     [Header("Item")]
     [SerializeField] private ItemType itemType;
 
+    [Header("Destroy on Drop")]
+    [SerializeField] private bool destroyOnSuccessfulDrop = false;
+    [SerializeField] private float destroyDelay = 0.1f;
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
 
@@ -33,6 +37,9 @@ public class DragableItem : MonoBehaviour,
 
     // Apakah drop terakhir berhasil
     private bool droppedSuccessfully = false;
+
+    // Reference ke parent layout group
+    private UnityEngine.UI.LayoutGroup parentLayoutGroup;
 
     private void Awake()
     {
@@ -79,6 +86,9 @@ public class DragableItem : MonoBehaviour,
 
         canvasGroup.blocksRaycasts = false;
 
+        // Disable parent layout group saat drag
+        DisableParentLayoutGroup();
+
         Debug.Log(
             gameObject.name +
             " mulai di-drag."
@@ -102,6 +112,9 @@ public class DragableItem : MonoBehaviour,
     {
         canvasGroup.blocksRaycasts = true;
 
+        // Re-enable parent layout group
+        EnableParentLayoutGroup();
+
         Debug.Log(
             gameObject.name +
             " selesai di-drag."
@@ -116,6 +129,25 @@ public class DragableItem : MonoBehaviour,
                 gameObject.name +
                 " drop tidak valid → kembali ke HOME POSITION."
             );
+        }
+        else
+        {
+            // Drop berhasil
+            Debug.Log(
+                gameObject.name +
+                " drop BERHASIL!"
+            );
+
+            // Destroy item jika setting enabled
+            if (destroyOnSuccessfulDrop)
+            {
+                Debug.Log(
+                    gameObject.name +
+                    " akan dihancurkan dalam " + destroyDelay + "s"
+                );
+
+                Destroy(gameObject, destroyDelay);
+            }
         }
     }
 
@@ -146,5 +178,32 @@ public class DragableItem : MonoBehaviour,
             " kembali ke HOME POSITION: " +
             homePosition
         );
+    }
+
+    // =====================================================
+    // DISABLE/ENABLE PARENT LAYOUT GROUP
+    // =====================================================
+
+    private void DisableParentLayoutGroup()
+    {
+        if (transform.parent == null)
+            return;
+
+        parentLayoutGroup = transform.parent.GetComponent<UnityEngine.UI.LayoutGroup>();
+
+        if (parentLayoutGroup != null)
+        {
+            parentLayoutGroup.enabled = false;
+            Debug.Log("Parent layout group disabled during drag.");
+        }
+    }
+
+    private void EnableParentLayoutGroup()
+    {
+        if (parentLayoutGroup != null)
+        {
+            parentLayoutGroup.enabled = true;
+            Debug.Log("Parent layout group re-enabled.");
+        }
     }
 }

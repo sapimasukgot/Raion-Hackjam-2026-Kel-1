@@ -235,6 +235,18 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         if (itemType == DragableItem.ItemType.Ration)
         {
+            // CEK RESOURCE DULU
+            if (GameManager.Instance.ration <= 0)
+            {
+                Debug.LogWarning("Ration habis! Tidak bisa drop.");
+                return;
+            }
+
+            // LANGSUNG KURANGI RESOURCE
+            GameManager.Instance.ration--;
+
+            Debug.Log("Ration digunakan. Tersisa: " + GameManager.Instance.ration);
+
             switch (dropZoneType)
             {
                 case DropZoneType.MemoDad:
@@ -293,6 +305,18 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         if (itemType == DragableItem.ItemType.Medkit)
         {
+            // CEK RESOURCE DULU
+            if (GameManager.Instance.medkit <= 0)
+            {
+                Debug.LogWarning("Medkit habis! Tidak bisa drop.");
+                return;
+            }
+
+            // LANGSUNG KURANGI RESOURCE
+            GameManager.Instance.medkit--;
+
+            Debug.Log("Medkit digunakan. Tersisa: " + GameManager.Instance.medkit);
+
             switch (dropZoneType)
             {
                 case DropZoneType.MemoDad:

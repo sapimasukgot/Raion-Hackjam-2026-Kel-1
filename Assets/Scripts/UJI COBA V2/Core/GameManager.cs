@@ -253,17 +253,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!ResourceManager.Instance.UseRation())
-        {
-            Debug.Log(
-                "Ration habis → " +
-                character.characterName +
-                " tidak mendapatkan makanan."
-            );
-
-            return;
-        }
-
+        // Resource sudah dikurangi saat drop
+        // Langsung feed character
         familyManager.FeedCharacter(
             character
         );
@@ -397,14 +388,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!ResourceManager.Instance.UseMedkit())
-        {
-            Debug.Log(
-                "Treatment GAGAL → Medkit habis."
-            );
-
-            return;
-        }
+        // Resource sudah dikurangi saat drop
+        // Langsung give treatment
 
         // Treatment dilakukan
         familyManager.GiveMedkit(character);
