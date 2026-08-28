@@ -324,7 +324,7 @@ public class EndingManager : MonoBehaviour
             case EndingType.BadEnding:
                 return new string[]
                 {
-                    "7 hari telah berlalu...",
+                    "",
                     "Tidak ada yang tersisa.",
                     "Rumah ini sekarang kosong.",
                     "BAD ENDING"
