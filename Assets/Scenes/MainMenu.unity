@@ -552,7 +552,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &131637913
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2078,6 +2078,7 @@ MonoBehaviour:
   settingsPanel: {fileID: 1382660252}
   creditsPanel: {fileID: 131637912}
   storyPanel: {fileID: 1794230925}
+  pausePanel: {fileID: 0}
   storyText: {fileID: 51766258}
   storyCanvasGroup: {fileID: 1194247539}
   storyDisplayDuration: 5

@@ -26,8 +26,13 @@ public class DragableItem : MonoBehaviour,
     [SerializeField] private bool destroyOnSuccessfulDrop = false;
     [SerializeField] private float destroyDelay = 0.1f;
 
+    [Header("Drag Visual Settings")]
+    [SerializeField] private float dragAlpha = 0.6f; // Transparansi saat drag
+    [SerializeField] private float dragScale = 0.9f; // Scale saat drag
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
+    private Vector3 originalScale;
 
     // Posisi sebelum drag
     private Vector3 originalPosition;
@@ -51,6 +56,9 @@ public class DragableItem : MonoBehaviour,
         {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
+
+        // Simpan scale original
+        originalScale = transform.localScale;
     }
 
     private void Start()
@@ -93,6 +101,10 @@ public class DragableItem : MonoBehaviour,
 
         canvasGroup.blocksRaycasts = false;
 
+        // Visual feedback: transparansi dan scale
+        canvasGroup.alpha = dragAlpha;
+        transform.localScale = originalScale * dragScale;
+
         // Disable parent layout group saat drag
         DisableParentLayoutGroup();
 
@@ -117,6 +129,7 @@ public class DragableItem : MonoBehaviour,
             return;
         }
 
+        // Langsung set posisi mengikuti cursor (smooth karena dipanggil setiap frame)
         rectTransform.position = eventData.position;
     }
 
@@ -133,6 +146,10 @@ public class DragableItem : MonoBehaviour,
         }
 
         canvasGroup.blocksRaycasts = true;
+
+        // Kembalikan visual ke normal
+        canvasGroup.alpha = 1f;
+        transform.localScale = originalScale;
 
         // Re-enable parent layout group
         EnableParentLayoutGroup();
