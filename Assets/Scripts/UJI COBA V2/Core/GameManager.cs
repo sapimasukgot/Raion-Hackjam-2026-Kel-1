@@ -253,8 +253,17 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Resource sudah dikurangi saat drop
-        // Langsung feed character
+        if (!ResourceManager.Instance.UseRation())
+        {
+            Debug.Log(
+                "Ration habis → " +
+                character.characterName +
+                " tidak mendapatkan makanan."
+            );
+
+            return;
+        }
+
         familyManager.FeedCharacter(
             character
         );
@@ -388,8 +397,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Resource sudah dikurangi saat drop
-        // Langsung give treatment
+        if (!ResourceManager.Instance.UseMedkit())
+        {
+            Debug.Log(
+                "Treatment GAGAL → Medkit habis."
+            );
+
+            return;
+        }
 
         // Treatment dilakukan
         familyManager.GiveMedkit(character);
@@ -1017,6 +1032,29 @@ public class GameManager : MonoBehaviour
         if (ExpeditionManager.Instance != null)
         {
             ExpeditionManager.Instance.ExecutePendingExpedition();
+        bool eventGameOverTriggered = false;
+
+        if (EventManager.Instance != null)
+        {
+            eventGameOverTriggered = EventManager.Instance.ExecutePendingEvent();
+        }
+
+        if (eventGameOverTriggered)
+        {
+            // Event ini (misal pengorbanan keluarga di hari terakhir) langsung
+            // memicu Bad Ending. Scene sudah/segera pindah → hentikan NextDay di sini.
+            return;
+        }
+
+        // =================================================
+        // 6.5 CEK KONSEKUENSI EVENT YANG TIDAK DISELESAIKAN
+        // =================================================
+
+        if (EventManager.Instance != null && EventManager.Instance.ApplyUnresolvedEventConsequence())
+        {
+            // Konsekuensinya langsung Game Over (misal Pintu rusak tidak diperbaiki).
+            // Scene sudah/segera pindah ke ending → hentikan NextDay di sini.
+            return;
         }
 
         // =================================================

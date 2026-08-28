@@ -211,11 +211,11 @@ public class EndingManager : MonoBehaviour
             aliveCount++;
 
         if (aliveCount == 4)
-            return EndingType.PerfectEnding;
+            return EndingType.Day66Ending;
         else if (aliveCount >= 2)
-            return EndingType.GoodEnding;
+            return EndingType.Day66Ending;
         else if (aliveCount == 1)
-            return EndingType.NormalEnding;
+            return EndingType.Day66Ending;
         else
             return EndingType.BadEnding;
     }
@@ -264,10 +264,45 @@ public class EndingManager : MonoBehaviour
                     "BAD ENDING"
                 };
 
+            case EndingType.Day66Ending:
+                return new string[]
+                {
+                    "66 Hari telah berlalu"
+                };
+
+            case EndingType.Dikorbankan:
+                return new string[]
+                {
+                    "Semua Orang desa Masuk ke Rumah",
+                    "Membawa Seluruh Anggota Keluarga",
+                    "...",
+                    "Satu Keluarga Telah Menjadi Tumbal"
+                };
+   
+
             default:
                 return endingStoryLines;
         }
     }
+
+    // =====================================================
+    // TRIGGER BAD ENDING (FORCED)
+    // Dipakai untuk konsekuensi event yang tidak diselesaikan
+    // (misal: Pintu rusak tidak diperbaiki → langsung Bad Ending),
+    // TIDAK menghitung aliveCount seperti TriggerEndingWithType().
+    // =====================================================
+
+    public void TriggerBadEndingForced()
+    {
+        endingStoryLines = GetEndingStory(EndingType.Dikorbankan);
+
+        Debug.Log("========================================");
+        Debug.Log("GAME ENDING: BadEnding (FORCED by event consequence)");
+        Debug.Log("========================================");
+
+        StartCoroutine(EndingSequence());
+    }
+
 
     // =====================================================
     // TRIGGER ENDING WITH TYPE
@@ -291,5 +326,7 @@ public enum EndingType
     PerfectEnding,
     GoodEnding,
     NormalEnding,
-    BadEnding
+    BadEnding,
+    Day66Ending,
+    Dikorbankan
 }

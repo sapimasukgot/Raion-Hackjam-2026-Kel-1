@@ -14,16 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DailyReportSO
   summaryText: 'day 5
 
-    Hari ini keluarga Setiawan pindah ke rumah baru. Aneh,
-    tadi di perjalanan, mereka melihat adanya perkumpulan warga warga di tengah hutan.
-    Setelah sampai ke rumah, keluarga Setiawan segera siap siap membersihkan rumah
-    baru mereka. Tadi pagi, seorang tetangga datang ke rumah Setiawan dan berbicara
-    dengan Adrian Setiawan. Terlihat bahwa tetangga itu berusaha mengajak keluarga
-    Setiawan untuk bergabung dengan komunitas mereka namun Adrian menolak. Ketika
-    tetangga itu mendengar penolakan itu, dia langsung menjadi gila dan teriak teriak
-    yang disusul dengan kemunculan para tetangga lain yang menyerbu rumah mereka
-    dengan senjata. Adrian segera mengunci pintu dan mengumpulkan keluarganya di
-    ruang tengah rumah.
 
 '
   possibleEvents:
@@ -34,4 +24,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d84c9ee0487792944acfb01e076f342a, type: 2}
   - {fileID: 11400000, guid: 330c0bc0cabf36a47b6c854c36938340, type: 2}
   canHaveNoEvent: 1
-  noEventChance: 0.525
+  noEventChance: 0.46

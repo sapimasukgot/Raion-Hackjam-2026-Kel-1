@@ -13,6 +13,11 @@ public class EventManager : MonoBehaviour
     public CharacterData pendingEventTarget;
     public bool hasPendingEvent = false;
 
+    [Header("Override Event Besok (dari konsekuensi event yang tidak diselesaikan)")]
+    public bool overrideNextDayEvent = false;
+    public RandomEventSO overrideForcedEvent;
+    public float overrideForcedEventChance = 99f;
+
     private void Awake()
     {
         Instance = this;
@@ -197,68 +202,104 @@ public class EventManager : MonoBehaviour
     // Dipanggil dari GameManager.ExecuteAllPending()
     // =====================================================
 
-    public void ExecutePendingEvent()
+    public bool ExecutePendingEvent()
     {
         if (!hasPendingEvent || pendingEvent == null)
         {
             Debug.Log("Tidak ada pending event untuk dieksekusi.");
-            return;
+            return false;
         }
 
         Debug.Log("========================================");
         Debug.Log("EXECUTE PENDING EVENT: " + pendingEvent.eventTitle);
 
+        bool gameOverTriggered = false;
+
         // Execute berdasarkan requirement type
+        bool itemSuccess = true;
+
         if (pendingEvent.requirementType == EventRequirementType.Item)
         {
-            ExecuteItemRequirement();
+            itemSuccess = ExecuteItemRequirement();
         }
         else if (pendingEvent.requirementType == EventRequirementType.CharacterPart)
         {
-            ExecuteCharacterSacrifice();
+            gameOverTriggered = ExecuteCharacterSacrifice();
         }
 
-        // Mark event resolved
-        currentEventResolved = true;
+        currentEventResolved = itemSuccess; // hanya resolved kalau memang berhasil
 
         // Clear pending
         ClearPendingEvent();
 
         Debug.Log("========================================");
+
+        return gameOverTriggered;
     }
 
-    private void ExecuteItemRequirement()
+    private bool ExecuteItemRequirement()
+{
+    bool success = false;
+
+    switch (pendingEvent.requiredItem)
     {
-        bool success = false;
+        case RequiredItemType.Tools:
+            success = ResourceManager.Instance.UseTools(pendingEvent.requiredItemAmount);
+            break;
 
-        switch (pendingEvent.requiredItem)
-        {
-            case RequiredItemType.Tools:
-                success = ResourceManager.Instance.UseTools(pendingEvent.requiredItemAmount);
-                break;
+        case RequiredItemType.Knife:
+            success = ResourceManager.Instance.UseKnife();
 
-            case RequiredItemType.Knife:
-                success = ResourceManager.Instance.UseKnife();
-                break;
-        }
+            // Kalau event ini tidak menghabiskan knife (misal Hunting),
+            // langsung balikin lagi setelah dipakai.
+            if (success && !pendingEvent.consumeKnifeOnUse)
+            {
+                ResourceManager.Instance.AddKnife();
 
-        if (!success)
-        {
-            Debug.LogError("GAGAL menggunakan item untuk event! Resource tidak cukup.");
-            return;
-        }
-
-        ApplyRewards();
-
-        Debug.Log("Event '" + pendingEvent.eventTitle + "' berhasil diselesaikan dengan item.");
+                Debug.Log("Knife dipakai untuk '" + pendingEvent.eventTitle + "' lalu dikembalikan lagi (tidak habis).");
+            }
+            break;
     }
 
-    private void ExecuteCharacterSacrifice()
+    if (!success)
+    {
+        Debug.LogError("GAGAL menggunakan item untuk event! Resource tidak cukup.");
+        return false; 
+    }
+
+    ApplyRewards();
+
+    Debug.Log("Event '" + pendingEvent.eventTitle + "' berhasil diselesaikan dengan item.");
+
+    return true;  
+}
+
+    private bool ExecuteCharacterSacrifice()
     {
         if (pendingEventTarget == null)
         {
             Debug.LogError("GAGAL execute character sacrifice! Target NULL.");
-            return;
+            return false;
+        }
+
+        // ================================================
+        // KASUS KHUSUS: event ini langsung trigger Bad Ending
+        // saat dikorbankan (misal event pilihan hari terakhir).
+        // Tidak ada body part loss / reward biasa untuk kasus ini.
+        // ================================================
+
+        if (pendingEvent.sacrificeTriggersBadEnding)
+        {
+            Debug.Log(
+                pendingEventTarget.characterName +
+                " dikorbankan untuk event '" + pendingEvent.eventTitle +
+                "' → Bad Ending dipicu langsung."
+            );
+
+            if (EndingManager.Instance != null)
+                EndingManager.Instance.TriggerBadEndingForced();
+
+            return true; // beritahu GameManager: game over sudah terpicu
         }
 
         // Apply body part loss
@@ -301,6 +342,8 @@ public class EventManager : MonoBehaviour
         Debug.Log(
             "Expedition fail chance bonus: " + pendingEventTarget.expeditionFailChanceBonus + "%"
         );
+
+        return false; // tidak trigger game over
     }
 
     // =====================================================
@@ -309,6 +352,13 @@ public class EventManager : MonoBehaviour
 
     private void ApplyRewards()
     {
+        // Reward random khusus event pengorbanan (Jari/Tangan/Kaki)
+        if (pendingEvent.useRandomSacrificeReward)
+        {
+            ApplyRandomSacrificeReward();
+            return;
+        }
+
         if (pendingEvent.gainRation > 0)
             ResourceManager.Instance.AddRation(pendingEvent.gainRation);
 
@@ -322,6 +372,62 @@ public class EventManager : MonoBehaviour
     }
 
     // =====================================================
+    // REWARD RANDOM - KHUSUS PENGORBANAN TUBUH
+    // Jumlah: 1 (70%) / 2 (29%) / 3 (1%)
+    // Jenis: Ration / Medkit / Tools / Knife (masing-masing 25%)
+    // =====================================================
+
+    private void ApplyRandomSacrificeReward()
+    {
+        int amount = RollRewardAmount();
+        RewardResourceType type = RollRewardType();
+
+        switch (type)
+        {
+            case RewardResourceType.Ration:
+                ResourceManager.Instance.AddRation(amount);
+                break;
+
+            case RewardResourceType.Medkit:
+                ResourceManager.Instance.AddMedkit(amount);
+                break;
+
+            case RewardResourceType.Tools:
+                ResourceManager.Instance.AddTools(amount);
+                break;
+
+            case RewardResourceType.Knife:
+                // Knife itu bool (punya/tidak), jumlah tidak berlaku di sini.
+                ResourceManager.Instance.AddKnife();
+                break;
+        }
+
+        Debug.Log(
+            "Random Sacrifice Reward → " +
+            (type == RewardResourceType.Knife ? "1x Knife" : amount + "x " + type)
+        );
+    }
+
+    private int RollRewardAmount()
+    {
+        float roll = Random.Range(0f, 100f);
+
+        if (roll < 70f) return 1;   // 0 - 70%
+        if (roll < 99f) return 2;   // 70 - 99%
+        return 3;                   // 99 - 100% (sisa 1%)
+    }
+
+    private RewardResourceType RollRewardType()
+    {
+        float roll = Random.Range(0f, 100f);
+
+        if (roll < 25f) return RewardResourceType.Ration;
+        if (roll < 50f) return RewardResourceType.Medkit;
+        if (roll < 75f) return RewardResourceType.Tools;
+        return RewardResourceType.Knife;
+    }
+
+    // =====================================================
     // CLEAR PENDING
     // =====================================================
 
@@ -332,6 +438,98 @@ public class EventManager : MonoBehaviour
         hasPendingEvent = false;
 
         Debug.Log("Pending event cleared.");
+    }
+
+    // =====================================================
+    // KONSEKUENSI JIKA EVENT TIDAK DISELESAIKAN
+    // Panggil ini SETELAH ExecutePendingEvent() di GameManager.NextDay(),
+    // karena currentEventResolved baru valid setelah itu.
+    // =====================================================
+
+    /// <summary>
+    /// Return true kalau konsekuensinya langsung memicu Game Over
+    /// (GameManager wajib "return" segera setelah ini kalau hasilnya true).
+    /// </summary>
+    public bool ApplyUnresolvedEventConsequence()
+    {
+        if (currentEvent == null || currentEventResolved)
+            return false;
+
+        switch (currentEvent.consequenceType)
+        {
+            case EventConsequenceType.TriggerBadEndingIfUnresolved:
+
+                Debug.Log(
+                    "Event '" + currentEvent.eventTitle +
+                    "' TIDAK diselesaikan → Bad Ending dipicu."
+                );
+
+                if (EndingManager.Instance != null)
+                    EndingManager.Instance.TriggerBadEndingForced();
+
+                return true;
+
+            case EventConsequenceType.OverrideNextDayEventIfUnresolved:
+
+                Debug.Log(
+                    "Event '" + currentEvent.eventTitle +
+                    "' TIDAK diselesaikan → event besok akan di-override."
+                );
+
+                overrideNextDayEvent = true;
+                overrideForcedEvent = currentEvent.overrideForceEvent;
+                overrideForcedEventChance = currentEvent.overrideForceEventChance;
+
+                return false;
+
+            default:
+                return false;
+        }
+    }
+
+    // =====================================================
+    // KONSUMSI OVERRIDE EVENT BESOK
+    // Dipanggil dari ReportUIController saat memilih event untuk hari baru.
+    // =====================================================
+
+    /// <summary>
+    /// Kalau ada override aktif dari kemarin, roll chance-nya di sini (sekali pakai).
+    /// - forcedEvent terisi kalau roll masuk ke persentase forced event.
+    /// - gameOverTriggered = true kalau roll masuk ke sisa persentase (Game Over instan).
+    /// Return false kalau memang tidak ada override yang perlu dikonsumsi.
+    /// </summary>
+    public bool TryConsumeOverrideEvent(out RandomEventSO forcedEvent, out bool gameOverTriggered)
+    {
+        forcedEvent = null;
+        gameOverTriggered = false;
+
+        if (!overrideNextDayEvent)
+            return false;
+
+        // Konsumsi sekali pakai
+        overrideNextDayEvent = false;
+
+        float roll = Random.Range(0f, 100f);
+
+        Debug.Log("Override Next Day Event → roll: " + roll + " / chance forced event: " + overrideForcedEventChance + "%");
+
+        if (roll < overrideForcedEventChance)
+        {
+            forcedEvent = overrideForcedEvent;
+
+            Debug.Log("Override hasil: FORCED EVENT → " + (forcedEvent != null ? forcedEvent.eventTitle : "NULL"));
+        }
+        else
+        {
+            gameOverTriggered = true;
+
+            Debug.Log("Override hasil: GAME OVER (masuk sisa persentase).");
+
+            if (EndingManager.Instance != null)
+                EndingManager.Instance.TriggerBadEndingForced();
+        }
+
+        return true;
     }
 
     // =====================================================
