@@ -17,5 +17,6 @@ MonoBehaviour:
     MINTA TUMBAL'
   possibleEvents:
   - {fileID: 11400000, guid: a63a7ce3e8bea604ab41882282d48f4c, type: 2}
+  - {fileID: 11400000, guid: a63a7ce3e8bea604ab41882282d48f4c, type: 2}
   canHaveNoEvent: 0
   noEventChance: 0

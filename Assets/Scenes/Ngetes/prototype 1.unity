@@ -4817,7 +4817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   currentDay: 1
-  ration: 0
+  ration: 2
   medkit: 1
   tools: 2
   knife: 1
@@ -4945,6 +4945,9 @@ MonoBehaviour:
   endingPanel: {fileID: 447013973}
   endingCanvasGroup: {fileID: 447013975}
   endingText: {fileID: 1659789197}
+  skullImagePanel: {fileID: 0}
+  skullCanvasGroup: {fileID: 0}
+  skullDisplayDuration: 5
   finalDay: 7
   mainMenuSceneName: MainMenu
   endingStoryLines:
@@ -4955,6 +4958,7 @@ MonoBehaviour:
   textDisplayDuration: 3
   fadeInDuration: 1
   fadeOutDuration: 1
+  pauseBetweenLines: 1.5
 --- !u!1 &1272349303
 GameObject:
   m_ObjectHideFlags: 0
@@ -5512,8 +5516,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
-  bgmClip: {fileID: 8300000, guid: ddb8a62437e42ef4881b36bba480bc12, type: 3}
-  bgmVolume: 0.918
+  bgmClip: {fileID: 8300000, guid: e9cfde6a30d4f00449f8d5809110a95a, type: 3}
+  bgmVolume: 3
   clickClip: {fileID: 8300000, guid: f77f49c696b22c34094c2920791c8291, type: 3}
   pageFlipClip: {fileID: 8300000, guid: 6a21aa0328d2f5043afd134a4b0326bd, type: 3}
   eatingClip: {fileID: 8300000, guid: 1071c0ddb3f953a479ac34de54891430, type: 3}
