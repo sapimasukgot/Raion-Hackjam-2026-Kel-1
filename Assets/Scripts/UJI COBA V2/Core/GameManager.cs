@@ -1032,6 +1032,12 @@ public class GameManager : MonoBehaviour
         if (ExpeditionManager.Instance != null)
         {
             ExpeditionManager.Instance.ExecutePendingExpedition();
+        }
+
+        // =================================================
+        // 6. RANDOM EVENT
+        // =================================================
+
         bool eventGameOverTriggered = false;
 
         if (EventManager.Instance != null)
@@ -1241,7 +1247,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(
             "=============================="
         );
-    }
+    } // End of NextDay()
 
 
     // =====================================================
