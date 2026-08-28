@@ -147,9 +147,12 @@ public class ReportUIController : MonoBehaviour
         if (EventManager.Instance == null)
             return;
 
-        bool resolved = EventManager.Instance.TryResolveItemRequirement();
+        // GUNAKAN METHOD BARU - SAVE PENDING
+        bool saved = EventManager.Instance.SavePendingItemRequirement();
 
-        if (resolved && itemRequirementUI != null)
+        Debug.Log("Item requirement button clicked. Saved: " + saved);
+
+        if (saved && itemRequirementUI != null)
         {
             itemRequirementUI.SetActive(false);
         }

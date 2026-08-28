@@ -110,11 +110,11 @@ public class DragableItem : MonoBehaviour,
         // Drop tidak valid
         if (!droppedSuccessfully)
         {
-            rectTransform.position = originalPosition;
+            rectTransform.position = homePosition;
 
             Debug.Log(
                 gameObject.name +
-                " drop tidak valid → kembali ke posisi sebelum drag."
+                " drop tidak valid → kembali ke HOME POSITION."
             );
         }
     }

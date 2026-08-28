@@ -990,8 +990,12 @@ public class GameManager : MonoBehaviour
             "========== NEXT DAY =========="
         );
 
+        Debug.Log(
+            "Current Day: " + currentDay + " → Next Day: " + (currentDay + 1)
+        );
+
         // =================================================
-        // 1. CHARACTER MISSING KEMBALI
+        // 1. MISSING CHARACTERS - Process dulu sebelum yang lain
         // =================================================
 
         ProcessMissingCharacters();
@@ -1009,25 +1013,34 @@ public class GameManager : MonoBehaviour
         ProcessPendingTreatment();
 
         // =================================================
-        // 4. DIARY / SACRIFICE
+        // 4. SACRIFICE (Diary)
         // =================================================
 
         ProcessPendingSacrifice();
 
         // =================================================
-        // 5. DOOR / EXIT
+        // 5. DOOR / EXIT (Expedition)
         // =================================================
 
         ProcessPendingExit();
 
         // =================================================
-        // 6. INJURY CONSEQUENCE
+        // 6. RANDOM EVENT - Execute Pending Event
+        // =================================================
+
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ExecutePendingEvent();
+        }
+
+        // =================================================
+        // 7. INJURY CONSEQUENCE
         // =================================================
 
         ProcessInjuryConsequences();
 
         // =================================================
-        // 7. HUNGER
+        // 8. HUNGER - Process hunger untuk yang tidak diberi makan
         // =================================================
 
         if (familyManager != null)
@@ -1042,19 +1055,40 @@ public class GameManager : MonoBehaviour
         }
 
         // =================================================
-        // 8. CLEAR FEEDING
+        // 9. CLEAR FEEDING
         // =================================================
 
         ClearPendingFeeding();
 
         // =================================================
-        // 9. NEXT DAY
+        // 10. INCREMENT DAY
         // =================================================
 
         currentDay++;
 
         // =================================================
-        // 10. TAMPILKAN DAILY REPORT HARI BARU
+        // 11. CHECK ENDING
+        // =================================================
+
+        if (EndingManager.Instance != null && EndingManager.Instance.ShouldEndGame(currentDay))
+        {
+            Debug.Log("Game reached final day. Triggering ending...");
+            
+            // Jangan tampilkan report hari berikutnya
+            // Langsung trigger ending
+            EndingManager.Instance.TriggerEndingWithType();
+            
+            return; // Stop execution
+        }
+
+        // =================================================
+        // 12. FORCE REFRESH CHARACTER VISUALS
+        // =================================================
+
+        RefreshAllCharacterVisuals();
+
+        // =================================================
+        // 13. TAMPILKAN DAILY REPORT HARI BARU
         // =================================================
 
         if (reportUIController != null)
@@ -1162,5 +1196,29 @@ public class GameManager : MonoBehaviour
         Debug.Log(
             "=============================="
         );
+    }
+
+
+    // =====================================================
+    // REFRESH ALL CHARACTER VISUALS
+    // Dipanggil setelah NextDay untuk update sprite
+    // =====================================================
+
+    private void RefreshAllCharacterVisuals()
+    {
+        CharacterVisual[] allVisuals = FindObjectsByType<CharacterVisual>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (CharacterVisual visual in allVisuals)
+        {
+            if (visual != null)
+            {
+                visual.ForceRefresh();
+            }
+        }
+
+        Debug.Log("All character visuals refreshed.");
     }
 }

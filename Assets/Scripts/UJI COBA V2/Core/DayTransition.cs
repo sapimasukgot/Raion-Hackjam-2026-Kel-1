@@ -17,11 +17,24 @@ public class DayTransitionUI : MonoBehaviour
 
 
     // =====================================================
+    // NEXT DAY BUTTON
+    // =====================================================
+
+    [Header("Next Day Button")]
+    [SerializeField] private Button nextDayButton;
+    [SerializeField] private TMP_Text nextDayButtonText;
+    [SerializeField] private string normalButtonText = "NEXT DAY";
+    [SerializeField] private string blockedButtonText = "Selesaikan Event!";
+
+
+    // =====================================================
     // UI YANG DITUTUP SAAT NEXT DAY
     // =====================================================
 
     [Header("UI To Close")]
     [SerializeField] private GameObject fridgeUI;
+    [SerializeField] private GameObject bigPaperUI;
+    [SerializeField] private GameObject reportUI;
 
 
     // =====================================================
@@ -64,6 +77,56 @@ public class DayTransitionUI : MonoBehaviour
         if (dayText != null)
         {
             dayText.gameObject.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        // Update status button setiap frame
+        UpdateNextDayButtonState();
+    }
+
+
+    // =====================================================
+    // UPDATE NEXT DAY BUTTON STATE
+    // =====================================================
+
+    private void UpdateNextDayButtonState()
+    {
+        if (nextDayButton == null)
+            return;
+
+        // Cek apakah ada event yang harus diselesaikan
+        bool canProceed = true;
+        string reason = "";
+
+        if (EventManager.Instance != null)
+        {
+            canProceed = EventManager.Instance.CanProceedNextDay();
+            reason = EventManager.Instance.GetEventBlockReason();
+
+            // Debug log (hapus setelah test)
+            if (!canProceed && Time.frameCount % 60 == 0) // Log tiap 60 frame
+            {
+                Debug.Log("Next Day BLOCKED: " + reason);
+                Debug.Log("Has Pending Event: " + EventManager.Instance.hasPendingEvent);
+            }
+        }
+
+        // Update button interactable
+        nextDayButton.interactable = canProceed;
+
+        // Update button text
+        if (nextDayButtonText != null)
+        {
+            if (canProceed)
+            {
+                nextDayButtonText.text = normalButtonText;
+            }
+            else
+            {
+                nextDayButtonText.text = blockedButtonText;
+            }
         }
     }
 
@@ -132,6 +195,31 @@ public class DayTransitionUI : MonoBehaviour
                 "GameManager.Instance tidak ditemukan!"
             );
         }
+
+
+        // =================================================
+        // 3.5. CEK APAKAH GAME ENDING
+        // Kalau game ending, EndingManager sudah take over
+        // Jangan lanjut ke show day text
+        // =================================================
+
+        if (EndingManager.Instance != null && 
+            EndingManager.Instance.ShouldEndGame(GameManager.Instance.currentDay))
+        {
+            Debug.Log("Game ending detected. Stopping day transition.");
+            
+            isTransitioning = false;
+            
+            // EndingManager will handle the rest
+            yield break;
+        }
+
+
+        // =================================================
+        // 3.6. FORCE REFRESH CHARACTER VISUALS
+        // =================================================
+
+        RefreshAllCharacterVisuals();
 
 
         // =================================================
@@ -204,6 +292,26 @@ public class DayTransitionUI : MonoBehaviour
 
             Debug.Log(
                 "Fridge UI ditutup."
+            );
+        }
+
+        // Big Paper / Report
+        if (bigPaperUI != null)
+        {
+            bigPaperUI.SetActive(false);
+
+            Debug.Log(
+                "Big Paper UI ditutup."
+            );
+        }
+
+        // Report Panel (alternative name)
+        if (reportUI != null)
+        {
+            reportUI.SetActive(false);
+
+            Debug.Log(
+                "Report UI ditutup."
             );
         }
     }
@@ -323,5 +431,28 @@ public class DayTransitionUI : MonoBehaviour
         }
 
         SetBlackAlpha(0f);
+    }
+
+
+    // =====================================================
+    // REFRESH ALL CHARACTER VISUALS
+    // =====================================================
+
+    private void RefreshAllCharacterVisuals()
+    {
+        CharacterVisual[] allVisuals = FindObjectsByType<CharacterVisual>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (CharacterVisual visual in allVisuals)
+        {
+            if (visual != null)
+            {
+                visual.ForceRefresh();
+            }
+        }
+
+        Debug.Log("DayTransition: All character visuals refreshed.");
     }
 }
