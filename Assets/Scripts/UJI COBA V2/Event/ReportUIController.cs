@@ -93,33 +93,36 @@ public class ReportUIController : MonoBehaviour
         RandomEventSO chosenEvent = null;
         bool usedOverride = false;
 
-        // Cek dulu apakah ada override dari konsekuensi event kemarin
-        // (misal: Jendela rusak tidak diperbaiki → besok 99% Hunting, 1% Game Over)
-        if (EventManager.Instance != null)
+        // Roll dulu event normal dari pool hari ini (belum langsung dipakai).
+        RandomEventSO normalEvent = report.GetRandomEvent(forceNoEvent);
+
+        // Event dengan sacrificeTriggersBadEnding = true itu event WAJIB/prioritas
+        // (misal event tumbal di hari terakhir). Kalau hari ini rollnya jatuh ke event
+        // semacam ini, dia HARUS muncul, mengabaikan override apapun dari hari sebelumnya.
+        bool isPriorityEvent = normalEvent != null && normalEvent.sacrificeTriggersBadEnding;
+
+        if (!isPriorityEvent && EventManager.Instance != null)
         {
             usedOverride = EventManager.Instance.TryConsumeOverrideEvent(
                 out RandomEventSO forcedEvent,
                 out bool gameOverTriggered
             );
 
-            if (usedOverride)
-            {
-                if (gameOverTriggered)
-                {
-                    // Game Over sudah dipicu oleh EventManager (sisa persentase kena).
-                    // Hentikan proses render report/event, jangan lanjut apapun lagi.
-                    return;
-                }
-
-                chosenEvent = forcedEvent;
-            }
-        }
-
-        // Kalau tidak ada override, pakai pool random event biasa dari report hari ini
-        if (!usedOverride)
+        if (usedOverride)
         {
-            chosenEvent = report.GetRandomEvent(forceNoEvent);
+        if (gameOverTriggered)
+        {
+            return;
         }
+
+        chosenEvent = forcedEvent;
+    }
+}
+
+if (!usedOverride)
+{
+    chosenEvent = normalEvent;
+}
 
         // Daftarkan event ini sebagai event aktif di EventManager
         // (dipakai DropZone.EventSacrifice & tombol resolve item untuk tahu event apa yang harus diselesaikan)
