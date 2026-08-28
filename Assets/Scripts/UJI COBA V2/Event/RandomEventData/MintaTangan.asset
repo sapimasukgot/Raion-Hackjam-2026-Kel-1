@@ -26,9 +26,15 @@ MonoBehaviour:
   requirementType: 2
   requiredItem: 0
   requiredItemAmount: 1
+  consumeKnifeOnUse: 1
   requiredBodyPart: 2
-  gainRation: 1
-  gainMedkit: 1
-  gainTools: 1
+  gainRation: 0
+  gainMedkit: 0
+  gainTools: 0
+  useRandomSacrificeReward: 1
   expeditionFailChanceBonus: 0
   disableExpeditionPermanently: 0
+  sacrificeTriggersBadEnding: 0
+  consequenceType: 0
+  overrideForceEvent: {fileID: 0}
+  overrideForceEventChance: 99
