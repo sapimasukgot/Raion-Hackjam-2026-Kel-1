@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3425e15e25afe634faaf74d5d6cfca0e, type: 3}
+  m_Name: Event_MintaKaki
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryEvent
+  eventID: Event_MintaKaki
+  category: 2
+  narasiKejadian: 'Bau anyir tercium tajam menembus ventilasi. Tetangga sedang mempersiapkan
+    pesta besar di alun-alun. Seseorang mengetuk jendela dengan ritme lambat: ''Kami
+    punya terlalu banyak makanan, tapi butuh sebuah kaki agar dewa kami bisa berjalan.
+    Berikan, dan kalian tidak akan kelaparan.'''
+  requiresTools: 0
+  requiresKnife: 0
+  requiresBandage: 0
+  choices:
+  - buttonLabel: Korbankan Kaki (+2 Rations)
+    rationChange: 2
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 1
+    disablesExpeditionPermanently: 1
+    triggersGameOver: 0
+  - buttonLabel: Abaikan
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0

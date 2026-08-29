@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3425e15e25afe634faaf74d5d6cfca0e, type: 3}
+  m_Name: Event_MintaTangan
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryEvent
+  eventID: Event_MintaTangan
+  category: 2
+  narasiKejadian: 'Nyanyian para tetangga malam ini terdengar sangat dekat di teras
+    rumah. Suara nyanyian mendadak berhenti dan digantikan oleh suara gergaji berkarat
+    yang dilemparkan ke depan pintu. Kepala desa berteriak menawarkan perbekalan,
+    dengan syarat persembahan daging yang lebih besar: satu lengan utuh.'
+  requiresTools: 0
+  requiresKnife: 0
+  requiresBandage: 0
+  choices:
+  - buttonLabel: Korbankan Tangan (+1 Medicine)
+    rationChange: 0
+    medicineChange: 1
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0.25
+    causesAmputation: 1
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
+  - buttonLabel: Korbankan Tangan (+1 Ration)
+    rationChange: 1
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0.25
+    causesAmputation: 1
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
+  - buttonLabel: Korbankan Tangan (+1 Tools)
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 1
+    knifeChange: 0
+    expeditionFailureIncrease: 0.25
+    causesAmputation: 1
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0
+  - buttonLabel: Abaikan
+    rationChange: 0
+    medicineChange: 0
+    toolsChange: 0
+    knifeChange: 0
+    expeditionFailureIncrease: 0
+    causesAmputation: 0
+    disablesExpeditionPermanently: 0
+    triggersGameOver: 0

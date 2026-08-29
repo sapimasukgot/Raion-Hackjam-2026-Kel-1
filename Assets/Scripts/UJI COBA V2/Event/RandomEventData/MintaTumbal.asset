@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8df7a0fc2b126a408f49b6e14013322, type: 3}
+  m_Name: MintaTumbal
+  m_EditorClassIdentifier: Assembly-CSharp::RandomEventSO
+  eventTitle: MINTA TUMBAL
+  eventDescription: MINTA TUMBAL
+  eventIcon: {fileID: 0}
+  weight: 1
+  requirementType: 2
+  requiredItem: 0
+  requiredItemAmount: 1
+  consumeKnifeOnUse: 0
+  requiredBodyPart: 3
+  gainRation: 0
+  gainMedkit: 0
+  gainTools: 0
+  useRandomSacrificeReward: 0
+  expeditionFailChanceBonus: 0
+  disableExpeditionPermanently: 0
+  sacrificeTriggersBadEnding: 1
+  consequenceType: 0
+  overrideForceEvent: {fileID: 0}
+  overrideForceEventChance: 99
